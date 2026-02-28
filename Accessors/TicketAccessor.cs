@@ -1,3 +1,7 @@
+using Microsoft.Data.Sqlite;
+using RaikesHacks_Project_S26.Model;
+using System.Data;
+
 /// <summary>
 /// AKS
 /// 2.28.2026
@@ -56,12 +60,12 @@ public class TicketAccessor : ITicketAccessor
                 {
                     return new TicketSale
                     {
-                        Id = reader.GetInt32("Id"),
-                        StudentEmail = reader.GetString("StudentEmail"),
-                        EventName = reader.GetString("EventName"),
-                        Price = reader.GetDouble("Price"),
-                        IsPaid = reader.GetInt32("IsPaid") == 1,
-                        PurchaseDate = reader.GetString("PurchaseDate")
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        StudentEmail = reader.GetString(reader.GetOrdinal("StudentEmail")),
+                        EventName = reader.GetString(reader.GetOrdinal("EventName")),
+                        Price = (decimal)reader.GetDouble(reader.GetOrdinal("Price")),
+                        IsPaid = reader.GetInt32(reader.GetOrdinal("IsPaid")) == 1,
+                        PurchaseDate = DateTime.Parse(reader.GetString(reader.GetOrdinal("PurchaseDate")))
                     };
                 }
                 return null;
@@ -87,12 +91,12 @@ public class TicketAccessor : ITicketAccessor
                 {
                     tickets.Add(new TicketSale
                     {
-                        Id = reader.GetInt32("Id"),
-                        StudentEmail = reader.GetString("StudentEmail"),
-                        EventName = reader.GetString("EventName"),
-                        Price = reader.GetDouble("Price"),
-                        IsPaid = reader.GetInt32("IsPaid") == 1,
-                        PurchaseDate = reader.GetString("PurchaseDate")
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        StudentEmail = reader.GetString(reader.GetOrdinal("StudentEmail")),
+                        EventName = reader.GetString(reader.GetOrdinal("EventName")),
+                        Price = (decimal)reader.GetDouble(reader.GetOrdinal("Price")),
+                        IsPaid = reader.GetInt32(reader.GetOrdinal("IsPaid")) == 1,
+                        PurchaseDate = DateTime.Parse(reader.GetString(reader.GetOrdinal("PurchaseDate")))
                     });
                 }
             }
@@ -120,12 +124,12 @@ public class TicketAccessor : ITicketAccessor
                 {
                     tickets.Add(new TicketSale
                     {
-                        Id = reader.GetInt32("Id"),
-                        StudentEmail = reader.GetString("StudentEmail"),
-                        EventName = reader.GetString("EventName"),
-                        Price = reader.GetDouble("Price"),
-                        IsPaid = reader.GetInt32("IsPaid") == 1,
-                        PurchaseDate = reader.GetString("PurchaseDate")
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        StudentEmail = reader.GetString(reader.GetOrdinal("StudentEmail")),
+                        EventName = reader.GetString(reader.GetOrdinal("EventName")),
+                        Price = (decimal)reader.GetDouble(reader.GetOrdinal("Price")),
+                        IsPaid = reader.GetInt32(reader.GetOrdinal("IsPaid")) == 1,
+                        PurchaseDate = DateTime.Parse(reader.GetString(reader.GetOrdinal("PurchaseDate")))
                     });
                 }
             }
@@ -153,12 +157,12 @@ public class TicketAccessor : ITicketAccessor
                 {
                     tickets.Add(new TicketSale
                     {
-                        Id = reader.GetInt32("Id"),
-                        StudentEmail = reader.GetString("StudentEmail"),
-                        EventName = reader.GetString("EventName"),
-                        Price = reader.GetDouble("Price"),
-                        IsPaid = reader.GetInt32("IsPaid") == 1,
-                        PurchaseDate = reader.GetString("PurchaseDate")
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        StudentEmail = reader.GetString(reader.GetOrdinal("StudentEmail")),
+                        EventName = reader.GetString(reader.GetOrdinal("EventName")),
+                        Price = (decimal)reader.GetDouble(reader.GetOrdinal("Price")),
+                        IsPaid = reader.GetInt32(reader.GetOrdinal("IsPaid")) == 1,
+                        PurchaseDate = DateTime.Parse(reader.GetString(reader.GetOrdinal("PurchaseDate")))
                     });
                 }
             }
