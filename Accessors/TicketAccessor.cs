@@ -1,9 +1,10 @@
 using Microsoft.Data.Sqlite;
 using RaikesHacks_Project_S26.Model;
-using RaikesHacks_Project_S26.Accessors;
 using System.Data;
 using Microsoft.Extensions.Configuration;
 
+namespace RaikesHacks_Project_S26.Accessors
+{
 /// <summary>
 /// Ticket accessor class implementing ITicketAccessor interface for accessing ticket sales from a SQLite db. Provides methods for CRUD operations and simple queries.
 /// </summary>
@@ -196,7 +197,7 @@ public class TicketAccessor : ITicketAccessor
     /// </returns>
     public async Task<bool> UpdateTicketAsync(TicketSale ticket)
     {
-        using var connection = new SqliteConnection(_connectionString);
+        using (var connection = new SqliteConnection(_connectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
@@ -222,7 +223,7 @@ public class TicketAccessor : ITicketAccessor
     }
 
     /// <summary>
-    /// Deleltes a ticket sale entry from DB by ID.
+    /// Deletes a ticket sale entry from DB by ID.
     /// </summary>
     /// <param name="id"></param>
     /// <returns>
@@ -240,4 +241,5 @@ public class TicketAccessor : ITicketAccessor
             return affectedRows > 0;
         }
     }    
-}    
+}
+}
