@@ -13,8 +13,30 @@ function App() {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
 
-  const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music', 'Expensive', 'Cheap'];
+  const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music'];
   const filterContainerRef = useRef(null);
+
+  // IMPORTANT: Update this port to match your ASP.NET Core launch settings (e.g., 5000, 5106, 7000)
+  const API_URL = 'http://localhost:5106/api/tickets';
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Data could not be fetched!');
+        const data = await response.json();
+        const mappedItems = data.map(ticket => ({
+          id: ticket.id,
+          description: ticket.eventName,
+          price: ticket.price,
+        }));
+        setItems(mappedItems);
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      }
+    };
+    fetchTickets();
+  }, []);
 
   useEffect(() => {
     // Effect to handle clicking outside the filter dropdown to close it
@@ -40,21 +62,57 @@ function App() {
     setSelectedFilters(newFilters);
   };
 
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
     if (description && price) {
       const newItem = {
-        id: Date.now(), // simple unique id
-        description,
-        price: parseFloat(price).toFixed(2)
+        // The backend expects a full TicketSale object.
+        // We'll use defaults for fields not in the form.
+        studentEmail: 'user@example.com', // Placeholder
+        eventName: description,
+        price: parseFloat(price),
+        isPaid: false,
+        purchaseDate: new Date().toISOString(),
       };
-      setItems([...items, newItem]);
-      // Clear inputs
-      setDescription('');
-      setPrice('');
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newItem)
+        });
+        if (!response.ok) throw new Error('Error creating ticket');
+        const createdTicket = await response.json();
+
+        // Add new item to state, mapping to local structure
+        setItems([...items, {
+          id: createdTicket.id,
+          description: createdTicket.eventName,
+          price: createdTicket.price
+        }]);
+
+        // Clear inputs
+        setDescription('');
+        setPrice('');
+        setShowForm(false); // Optionally close form on success
+      } catch (error) {
+        console.error('Error adding item:', error);
+        alert('Failed to add item. Please try again.');
+      }
     } else {
       alert('Please enter both description and price.');
     }
   };
+
+  // Filter and sort items before rendering
+  const displayedItems = items
+    .filter(item => {
+      // Filter by selected event types
+      const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.description);
+      // Filter by search term (case-insensitive search on description)
+      const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
+      return filterMatch && searchMatch;
+    })
+    .sort((a, b) => a.price - b.price);
 
   return (
     <>
@@ -63,11 +121,11 @@ function App() {
         <div className="search-group">
           <input
             type="text"
-            placeholder="Search topics..."
+            placeholder="Search events..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button onClick={() => alert('Searching for: ' + searchTerm)}>Search</button>
+          <button>Search</button>
         </div>
         <div className="filter-container" ref={filterContainerRef}>
           <button className="filter-btn" onClick={() => setShowFilters(!showFilters)}>
@@ -101,7 +159,7 @@ function App() {
           <div className="form-container">
             <input
               type="text"
-              placeholder="Item Description"
+              placeholder="Event Name"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -116,10 +174,10 @@ function App() {
         )}
 
         <div className="item-list">
-          {items.map(item => (
+          {displayedItems.map(item => (
             <div key={item.id} className="item-card">
               <span className="item-text">{item.description}</span>
-              <span className="item-price">${item.price}</span>
+              <span className="item-price">${item.price.toFixed(2)}</span>
             </div>
           ))}
         </div>
