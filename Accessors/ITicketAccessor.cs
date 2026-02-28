@@ -21,7 +21,7 @@ namespace RaikesHacks_Project_S26.Accessors
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<TicketSale> GetTicketByIdAsync(int id);
+        Task<TicketSale?> GetTicketByIdAsync(int id);
 
         /// <summary>
         /// Fetches all ticket sales from DB.

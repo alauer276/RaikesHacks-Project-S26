@@ -1,0 +1,37 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependencies
+**/packages/
+**/node_modules/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+Log/
+
+# Visual Studio
+.vs/
+*.csproj.user
+*.vbproj.user
+
+# Rider
+.idea/
+
+# Secrets
+secrets.json
+appsettings.Development.json

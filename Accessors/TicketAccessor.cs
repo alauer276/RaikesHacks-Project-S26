@@ -20,7 +20,8 @@ public class TicketAccessor : ITicketAccessor
     /// </summary>
     public TicketAccessor(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("TicketDb"); //appsettings.json
+        _connectionString = configuration.GetConnectionString("TicketDb") 
+            ?? throw new InvalidOperationException("Connection string 'TicketDb' not found in configuration.");
     }
 
     /// <summary>

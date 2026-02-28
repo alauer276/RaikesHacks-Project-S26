@@ -1,17 +1,17 @@
 {
   "version": 2,
-  "dgSpecHash": "FRtTtfakcQc=",
+  "dgSpecHash": "hco2yI0aplw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\derpe\\projects\\RaikesHacks-Project-S26\\RaikesHacks-Project-S26.csproj",
+  "projectFilePath": "C:\\Users\\adria\\VS Code\\RaikesHacks-Project-S26\\RaikesHacks-Project-S26.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\derpe\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.3\\microsoft.aspnetcore.openapi.10.0.3.nupkg.sha512",
-    "C:\\Users\\derpe\\.nuget\\packages\\microsoft.data.sqlite\\10.0.3\\microsoft.data.sqlite.10.0.3.nupkg.sha512",
-    "C:\\Users\\derpe\\.nuget\\packages\\microsoft.data.sqlite.core\\10.0.3\\microsoft.data.sqlite.core.10.0.3.nupkg.sha512",
-    "C:\\Users\\derpe\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
-    "C:\\Users\\derpe\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.11\\sqlitepclraw.bundle_e_sqlite3.2.1.11.nupkg.sha512",
-    "C:\\Users\\derpe\\.nuget\\packages\\sqlitepclraw.core\\2.1.11\\sqlitepclraw.core.2.1.11.nupkg.sha512",
-    "C:\\Users\\derpe\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.11\\sqlitepclraw.lib.e_sqlite3.2.1.11.nupkg.sha512",
-    "C:\\Users\\derpe\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.11\\sqlitepclraw.provider.e_sqlite3.2.1.11.nupkg.sha512"
+    "C:\\Users\\adria\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.3\\microsoft.aspnetcore.openapi.10.0.3.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\microsoft.data.sqlite\\10.0.3\\microsoft.data.sqlite.10.0.3.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\microsoft.data.sqlite.core\\10.0.3\\microsoft.data.sqlite.core.10.0.3.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.11\\sqlitepclraw.bundle_e_sqlite3.2.1.11.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\sqlitepclraw.core\\2.1.11\\sqlitepclraw.core.2.1.11.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.11\\sqlitepclraw.lib.e_sqlite3.2.1.11.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.11\\sqlitepclraw.provider.e_sqlite3.2.1.11.nupkg.sha512"
   ],
   "logs": []
 }
