@@ -111,21 +111,13 @@ namespace RaikesHacks_Project_S26.Accessors
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM TicketSales WHERE StudentEmail = @StudentEmail";
+                command.CommandText = "SELECT Id, StudentEmail, EventName, Price, IsPaid, PurchaseDate FROM TicketSales WHERE StudentEmail = @StudentEmail";
                 command.Parameters.AddWithValue("@StudentEmail", studentEmail);
                 using (var reader = await command.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        tickets.Add(new TicketSale
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            StudentEmail = reader.GetString(reader.GetOrdinal("StudentEmail")),
-                            EventName = reader.GetString(reader.GetOrdinal("EventName")),
-                            Price = (decimal)reader.GetDouble(reader.GetOrdinal("Price")),
-                            IsPaid = reader.GetInt32(reader.GetOrdinal("IsPaid")) == 1,
-                            PurchaseDate = DateTime.Parse(reader.GetString(reader.GetOrdinal("PurchaseDate")))
-                        });
+                        tickets.Add(MapReaderToTicket(reader));
                     }
                 }
             }
