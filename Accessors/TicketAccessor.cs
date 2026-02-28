@@ -3,72 +3,69 @@ using RaikesHacks_Project_S26.Model;
 using System.Data;
 
 /// <summary>
+/// Ticket accessor class implementing ITicketAccessor interface for accessing ticket sales from a SQLite db. Provides methods for CRUD operations and simple queries.
+/// </summary>
+/// <remarks>
 /// AKS
 /// 2.28.2026
-/// Accesses ticket sales from a SQLite db.
-/// </summary>
+/// </remarks>
 public class TicketAccessor : ITicketAccessor
 {
-    /// <summary>
-    /// Path to DB file, in the same directory as exe.
-    /// </summary>
-    public static string DbPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tickets.db");
+    private readonly string _conectionString;
 
     /// <summary>
     /// Constructor for TicketAccessor. If the DB file doesn't exist, it creates it and the necessary table.
     /// </summary>
-    public TicketAccessor()
+    public TicketAccessor(IConfiguration configuration)
     {
-        if (!File.Exists(DbPath))
-        {
-            using (var connection = new SqliteConnection($"Data Source={DbPath}"))
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText =
-                @"
-                    CREATE TABLE TicketSales (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        StudentEmail TEXT NOT NULL,
-                        EventName TEXT NOT NULL,
-                        Price REAL NOT NULL,
-                        IsPaid INTEGER NOT NULL,
-                        PurchaseDate TEXT NOT NULL
-                    );
-                ";
-                command.ExecuteNonQuery();
-            }
-        }
+        _conectionString = configuration.GetConnectionString("TicketDb");; //appsettings.json
     }
 
+    /// <summary>
+    /// Maps a data reader to a ticket sale object.
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <returns>
+    /// The mapped ticket sale object.
+    /// </returns>
+    private static TicketSale MapReaderToTicket(SqliteDataReader reader)
+    {
+        return new TicketSale
+        {
+            Id = reader.GetInt32(0),
+            StudentEmail = reader.GetString(1),
+            EventName = reader.GetString(2),
+            Price = (decimal)reader.GetDouble(3),
+            IsPaid = reader.GetInt32(4) == 1,
+            PurchaseDate = DateTime.Parse(reader.GetString(5))
+        };
+    }
+    
     /// <summary>
     /// Fetches ticket sale by ID from DB. Returns null if not found.
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
+    /// <returns>
+    /// The ticket sale if found, otherwise null.
+    /// </returns>
     public async Task<TicketSale> GetTicketByIdAsync(int id)
     {
-        using (var connection = new SqliteConnection($"Data Source={DbPath}"))
+        using (var connection = new SqliteConnection(_conectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM TicketSales WHERE Id = @Id";
+            command.CommandText = "SELECT Id, StudentEmail, EventName, Price, IsPaid, PurchaseDate FROM TicketSales WHERE Id = @Id";
             command.Parameters.AddWithValue("@Id", id);
             using (var reader = await command.ExecuteReaderAsync())
             {
                 if (await reader.ReadAsync())
                 {
-                    return new TicketSale
-                    {
-                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                        StudentEmail = reader.GetString(reader.GetOrdinal("StudentEmail")),
-                        EventName = reader.GetString(reader.GetOrdinal("EventName")),
-                        Price = (decimal)reader.GetDouble(reader.GetOrdinal("Price")),
-                        IsPaid = reader.GetInt32(reader.GetOrdinal("IsPaid")) == 1,
-                        PurchaseDate = DateTime.Parse(reader.GetString(reader.GetOrdinal("PurchaseDate")))
-                    };
+                    return MapReaderToTicket(reader);
                 }
-                return null;
+                else
+                {
+                    return null;
+                }
             }
         }
     }
@@ -76,43 +73,39 @@ public class TicketAccessor : ITicketAccessor
     /// <summary>
     /// Fetches all ticket sales from DB. Note async.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// A list of all ticket sales.
+    /// </returns>
     public async Task<IEnumerable<TicketSale>> GetAllTicketsAsync()
     {
-        var tickets = new List<TicketSale>();
-        using (var connection = new SqliteConnection($"Data Source={DbPath}"))
+        using (var connection = new SqliteConnection(_conectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM TicketSales";
+            command.CommandText = "SELECT Id, StudentEmail, EventName, Price, IsPaid, PurchaseDate FROM TicketSales";
             using (var reader = await command.ExecuteReaderAsync())
             {
+                var tickets = new List<TicketSale>();
                 while (await reader.ReadAsync())
                 {
-                    tickets.Add(new TicketSale
-                    {
-                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                        StudentEmail = reader.GetString(reader.GetOrdinal("StudentEmail")),
-                        EventName = reader.GetString(reader.GetOrdinal("EventName")),
-                        Price = (decimal)reader.GetDouble(reader.GetOrdinal("Price")),
-                        IsPaid = reader.GetInt32(reader.GetOrdinal("IsPaid")) == 1,
-                        PurchaseDate = DateTime.Parse(reader.GetString(reader.GetOrdinal("PurchaseDate")))
-                    });
+                    tickets.Add(MapReaderToTicket(reader));
                 }
+                return tickets;
             }
         }
-        return tickets;
     }
 
     /// <summary>
     /// Fetches ticket sales by student email from DB. Note async.
     /// </summary>
     /// <param name="studentEmail"></param>
-    /// <returns></returns>
+    /// <returns>
+    /// A list of ticket sales for the given student email.
+    /// </returns>
     public async Task<IEnumerable<TicketSale>> GetTicketsByStudentEmailAsync(string studentEmail)
     {
         var tickets = new List<TicketSale>();
-        using (var connection = new SqliteConnection($"Data Source={DbPath}"))
+        using (var connection = new SqliteConnection($"Data Source={_conectionString}"))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
@@ -141,43 +134,39 @@ public class TicketAccessor : ITicketAccessor
     /// Fetches ticket sales by event name from DB.    
     /// </summary>
     /// <param name="eventName"></param>
-    /// <returns></returns>
+    /// <returns>
+    /// A list of ticket sales for the given event name.
+    /// </returns>
     public async Task<IEnumerable<TicketSale>> GetTicketsByEventNameAsync(string eventName)
     {
-        var tickets = new List<TicketSale>();
-        using (var connection = new SqliteConnection($"Data Source={DbPath}"))
+        using (var connection = new SqliteConnection(_conectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM TicketSales WHERE EventName = @EventName";
+            command.CommandText = "SELECT Id, StudentEmail, EventName, Price, IsPaid, PurchaseDate FROM TicketSales WHERE EventName = @EventName";
             command.Parameters.AddWithValue("@EventName", eventName);
             using (var reader = await command.ExecuteReaderAsync())
             {
+                var tickets = new List<TicketSale>();
                 while (await reader.ReadAsync())
                 {
-                    tickets.Add(new TicketSale
-                    {
-                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                        StudentEmail = reader.GetString(reader.GetOrdinal("StudentEmail")),
-                        EventName = reader.GetString(reader.GetOrdinal("EventName")),
-                        Price = (decimal)reader.GetDouble(reader.GetOrdinal("Price")),
-                        IsPaid = reader.GetInt32(reader.GetOrdinal("IsPaid")) == 1,
-                        PurchaseDate = DateTime.Parse(reader.GetString(reader.GetOrdinal("PurchaseDate")))
-                    });
+                    tickets.Add(MapReaderToTicket(reader));
                 }
+                return tickets;
             }
         }
-        return tickets;
     }
 
     /// <summary>
-    /// Creates a new ticket sale in the DB. Returns the ID of the newly created ticket.
+    /// Creates a new ticket sale in the DB.
     /// </summary>
     /// <param name="ticket"></param>
-    /// <returns></returns>
+    /// <returns>
+    /// The ID of the newly created ticket.
+    /// </returns>
     public async Task<int> CreateTicketAsync(TicketSale ticket)
     {
-        using (var connection = new SqliteConnection($"Data Source={DbPath}"))
+        using (var connection = new SqliteConnection(_conectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
@@ -200,47 +189,53 @@ public class TicketAccessor : ITicketAccessor
     /// Updates an existing ticket sale in the DB. The ticket must have a valid ID.
     /// </summary>
     /// <param name="ticket"></param>
-    /// <returns></returns>
+    /// <returns>
+    /// True if the ticket was updated, false if the ID didn't exist.
+    /// </returns>
     public async Task UpdateTicketAsync(TicketSale ticket)
     {
-        using (var connection = new SqliteConnection($"Data Source={DbPath}"))
-        {
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText =
-            @"
-                UPDATE TicketSales
-                SET StudentEmail = @StudentEmail,
-                    EventName = @EventName,
-                    Price = @Price,
-                    IsPaid = @IsPaid,
-                    PurchaseDate = @PurchaseDate
-                WHERE Id = @Id;
-            ";
-            command.Parameters.AddWithValue("@Id", ticket.Id);
-            command.Parameters.AddWithValue("@StudentEmail", ticket.StudentEmail);
-            command.Parameters.AddWithValue("@EventName", ticket.EventName);
-            command.Parameters.AddWithValue("@Price", ticket.Price);
-            command.Parameters.AddWithValue("@IsPaid", ticket.IsPaid ? 1 : 0);
-            command.Parameters.AddWithValue("@PurchaseDate", ticket.PurchaseDate.ToString("o"));
-            await command.ExecuteNonQueryAsync();
-        }
+        using var connection = new SqliteConnection(_connectionString);
+        await connection.OpenAsync();
+        
+        var command = connection.CreateCommand();
+        command.CommandText = @"
+            UPDATE TicketSales 
+            SET StudentEmail = @StudentEmail, 
+                EventName = @EventName, 
+                Price = @Price, 
+                IsPaid = @IsPaid, 
+                PurchaseDate = @PurchaseDate 
+            WHERE Id = @Id";
+        command.Parameters.AddWithValue("@Id", ticket.Id);
+        command.Parameters.AddWithValue("@StudentEmail", ticket.StudentEmail);
+        command.Parameters.AddWithValue("@EventName", ticket.EventName);
+        command.Parameters.AddWithValue("@Price", ticket.Price);
+        command.Parameters.AddWithValue("@IsPaid", ticket.IsPaid ? 1 : 0);
+        command.Parameters.AddWithValue("@PurchaseDate", ticket.PurchaseDate.ToString("o"));
+
+        int affectedRows = await command.ExecuteNonQueryAsync();
+
+        return affectedRows > 0;
     }
 
     /// <summary>
     /// Deleltes a ticket sale entry from DB by ID.
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
+    /// <returns>
+    /// True if the ticket was deleted, false if the ID didn't exist.
+    /// </returns>
     public async Task DeleteTicketAsync(int id)
     {
-        using (var connection = new SqliteConnection($"Data Source={DbPath}"))
+        using (var connection = new SqliteConnection($"Data Source={_conectionString}"))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText = "DELETE FROM TicketSales WHERE Id = @Id";
             command.Parameters.AddWithValue("@Id", id);
             await command.ExecuteNonQueryAsync();
+            int affectedRows = await command.ExecuteNonQueryAsync();
+            return affectedRows > 0;
         }
     }    
 }    
