@@ -59,7 +59,7 @@ dropdownMenu.style.cssText = `
 const selectedFilters = new Set();
 
 // Add items to dropdown
-['Popular', 'Tickets', 'Clothes', 'Tech', 'New', 'Used'].forEach(text => {
+['Football', 'Volleyball', 'Basketball', 'Music', 'Expensive', 'Cheap'].forEach(text => {
     const item = document.createElement('div');
     item.innerText = text;
     item.style.cssText = 'padding: 12px; color: #333; cursor: pointer; border-bottom: 1px solid #eee;';
