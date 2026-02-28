@@ -1,149 +1,130 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react';
 import './App.css'
 
 function App() {
-  const [tickets, setTickets] = useState([])
-  const [formData, setFormData] = useState({
-    studentEmail: '',
-    eventName: '',
-    price: '',
-    isPaid: false,
-    purchaseDate: new Date().toISOString().split('T')[0]
-  })
-  const [editingId, setEditingId] = useState(null)
+  // State for UI elements
+  const [showFilters, setShowFilters] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
-  // IMPORTANT: Update this port to match your ASP.NET Core launch settings (e.g., 5000, 5106, 7000)
-  const API_URL = 'http://localhost:5106/api/tickets'; 
+  // State for data
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFilters, setSelectedFilters] = useState(new Set());
+  const [items, setItems] = useState([]);
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+
+  const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music', 'Expensive', 'Cheap'];
+  const filterContainerRef = useRef(null);
 
   useEffect(() => {
-    fetchTickets()
-  }, [])
-
-  const fetchTickets = async () => {
-    try {
-      const response = await fetch(API_URL)
-      if (response.ok) {
-        const data = await response.json()
-        setTickets(data)
+    // Effect to handle clicking outside the filter dropdown to close it
+    function handleClickOutside(event) {
+      if (filterContainerRef.current && !filterContainerRef.current.contains(event.target)) {
+        setShowFilters(false);
       }
-    } catch (error) {
-      console.error('Error fetching tickets:', error)
     }
-  }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [filterContainerRef]);
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    const payload = {
-      ...formData,
-      price: Number(formData.price),
-      purchaseDate: new Date(formData.purchaseDate).toISOString()
+  // Event Handlers
+  const handleFilterSelect = (filter) => {
+    const newFilters = new Set(selectedFilters);
+    if (newFilters.has(filter)) {
+      newFilters.delete(filter);
+    } else {
+      newFilters.add(filter);
     }
+    setSelectedFilters(newFilters);
+  };
 
-    try {
-      const url = editingId ? `${API_URL}/${editingId}` : API_URL
-      const method = editingId ? 'PUT' : 'POST'
-      const response = await fetch(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-
-      if (response.ok) {
-        await fetchTickets()
-        setFormData({
-            studentEmail: '',
-            eventName: '',
-            price: '',
-            isPaid: false,
-            purchaseDate: new Date().toISOString().split('T')[0]
-        })
-        setEditingId(null)
-      }
-    } catch (error) {
-      console.error('Error saving ticket:', error)
+  const handleAddItem = () => {
+    if (description && price) {
+      const newItem = {
+        id: Date.now(), // simple unique id
+        description,
+        price: parseFloat(price).toFixed(2)
+      };
+      setItems([...items, newItem]);
+      // Clear inputs
+      setDescription('');
+      setPrice('');
+    } else {
+      alert('Please enter both description and price.');
     }
-  }
-
-  const handleEdit = (ticket) => {
-    setEditingId(ticket.id)
-    setFormData({
-      studentEmail: ticket.studentEmail,
-      eventName: ticket.eventName,
-      price: ticket.price,
-      isPaid: ticket.isPaid,
-      purchaseDate: ticket.purchaseDate.split('T')[0]
-    })
-  }
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this ticket?')) return
-    try {
-      const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' })
-      if (response.ok) fetchTickets()
-    } catch (error) {
-      console.error('Error deleting ticket:', error)
-    }
-  }
+  };
 
   return (
-    <div className="container">
-      <h1>Ticket Sales Dashboard</h1>
-      <div className="content">
-        <div className="card form-card">
-          <h2>{editingId ? 'Edit Ticket' : 'New Ticket'}</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group"><label>Email</label><input type="email" name="studentEmail" value={formData.studentEmail} onChange={handleInputChange} required /></div>
-            <div className="form-group"><label>Event</label><input type="text" name="eventName" value={formData.eventName} onChange={handleInputChange} required /></div>
-            <div className="form-group"><label>Price</label><input type="number" step="0.01" name="price" value={formData.price} onChange={handleInputChange} required /></div>
-            <div className="form-group"><label>Date</label><input type="date" name="purchaseDate" value={formData.purchaseDate} onChange={handleInputChange} required /></div>
-            <div className="form-group checkbox"><label><input type="checkbox" name="isPaid" checked={formData.isPaid} onChange={handleInputChange} /> Paid</label></div>
-            <button type="submit">{editingId ? 'Update Ticket' : 'Add Ticket'}</button>
-            {editingId && (
-              <button 
-                type="button" 
-                onClick={() => {
-                  setEditingId(null)
-                  setFormData({ studentEmail: '', eventName: '', price: '', isPaid: false, purchaseDate: new Date().toISOString().split('T')[0] })
-                }}
-                style={{ marginLeft: '10px', opacity: 0.8 }}
-              >
-                Cancel
-              </button>
-            )}
-          </form>
+    <>
+      <nav className="navbar">
+        <div className="home-icon" onClick={() => window.location.reload()}>🏠</div>
+        <div className="search-group">
+          <input
+            type="text"
+            placeholder="Search topics..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button onClick={() => alert('Searching for: ' + searchTerm)}>Search</button>
         </div>
-        <div className="card list-card">
-          <h2>Tickets</h2>
-          <table>
-            <thead>
-              <tr><th>Event</th><th>Email</th><th>Price</th><th>Status</th><th>Action</th></tr>
-            </thead>
-            <tbody>
-              {tickets.map(t => (
-                <tr key={t.id}>
-                  <td>{t.eventName}</td>
-                  <td>{t.studentEmail}</td>
-                  <td>${t.price.toFixed(2)}</td>
-                  <td>{t.isPaid ? '✅' : '❌'}</td>
-                  <td>
-                    <button onClick={() => handleEdit(t)} style={{ marginRight: '5px' }}>Edit</button>
-                    <button onClick={() => handleDelete(t.id)}>Delete</button>
-                  </td>
-                </tr>
+        <div className="filter-container" ref={filterContainerRef}>
+          <button className="filter-btn" onClick={() => setShowFilters(!showFilters)}>
+            {selectedFilters.size > 0 ? `Filters (${selectedFilters.size})` : 'Filters'} ▾
+          </button>
+          {showFilters && (
+            <div className="dropdown-menu">
+              {filterOptions.map(filter => (
+                <div
+                  key={filter}
+                  className={`dropdown-item ${selectedFilters.has(filter) ? 'selected' : ''}`}
+                  onClick={() => handleFilterSelect(filter)}
+                >
+                  {filter}
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
-      </div>
-    </div>
+      </nav>
+
+      <main className="main-container">
+        <button
+          className={`add-item-btn ${showForm ? 'close' : ''}`}
+          onClick={() => setShowForm(!showForm)}
+        >
+          {showForm ? 'Close Form' : 'Add New Item'}
+        </button>
+
+        {showForm && (
+          <div className="form-container">
+            <input
+              type="text"
+              placeholder="Item Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Price ($)"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+            <button onClick={handleAddItem}>Save Item</button>
+          </div>
+        )}
+
+        <div className="item-list">
+          {items.map(item => (
+            <div key={item.id} className="item-card">
+              <span className="item-text">{item.description}</span>
+              <span className="item-price">${item.price}</span>
+            </div>
+          ))}
+        </div>
+      </main>
+    </>
   )
 }
 
