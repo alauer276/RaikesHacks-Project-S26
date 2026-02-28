@@ -12,6 +12,7 @@ function App() {
   const [items, setItems] = useState([]);
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('Football');
 
   const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music'];
   const filterContainerRef = useRef(null);
@@ -45,12 +46,14 @@ function App() {
       const newItem = {
         id: Date.now(), // simple unique id
         description,
-        price: parseFloat(price).toFixed(2)
+        price: parseFloat(price).toFixed(2),
+        category
       };
       setItems([...items, newItem]);
       // Clear inputs
       setDescription('');
       setPrice('');
+      setCategory('Football');
     } else {
       alert('Please enter both description and price.');
     }
@@ -59,7 +62,7 @@ function App() {
   // Filter and sort items logic
   let displayedItems = items.filter(item => {
     const matchesSearch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = selectedFilters.size === 0 || selectedFilters.has(item.description);
+    const matchesFilter = selectedFilters.size === 0 || selectedFilters.has(item.category);
     return matchesSearch && matchesFilter;
   });
 
@@ -102,20 +105,18 @@ function App() {
       </nav>
 
       <main className="main-container">
-        {/* Left Column Wrapper */}
-        <div className="sidebar">
-          <button
-            className={`add-item-btn ${showForm ? 'close' : ''}`}
-            onClick={() => setShowForm(!showForm)}
-          >
-            {showForm ? 'Close Form' : 'Add New Item'}
-          </button>
-          </div>
+        <button
+          className={`add-item-btn ${showForm ? 'close' : ''}`}
+          onClick={() => setShowForm(!showForm)}
+        >
+          {showForm ? 'Close Form' : 'Add New Item'}
+        </button>
+
         {showForm && (
           <div className="form-container">
             <input
               type="text"
-              placeholder="Event Name"
+              placeholder="Item Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -125,6 +126,15 @@ function App() {
               value={price}
               onChange={(e) => setPrice(e.target.value)}
             />
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+            >
+              {filterOptions.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
             <button onClick={handleAddItem}>Save Item</button>
           </div>
         )}
