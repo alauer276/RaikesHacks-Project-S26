@@ -1,6 +1,8 @@
 using Microsoft.Data.Sqlite;
 using RaikesHacks_Project_S26.Model;
+using RaikesHacks_Project_S26.Accessors;
 using System.Data;
+using Microsoft.Extensions.Configuration;
 
 /// <summary>
 /// Ticket accessor class implementing ITicketAccessor interface for accessing ticket sales from a SQLite db. Provides methods for CRUD operations and simple queries.
@@ -11,14 +13,14 @@ using System.Data;
 /// </remarks>
 public class TicketAccessor : ITicketAccessor
 {
-    private readonly string _conectionString;
+    private readonly string _connectionString;
 
     /// <summary>
     /// Constructor for TicketAccessor. If the DB file doesn't exist, it creates it and the necessary table.
     /// </summary>
     public TicketAccessor(IConfiguration configuration)
     {
-        _conectionString = configuration.GetConnectionString("TicketDb");; //appsettings.json
+        _connectionString = configuration.GetConnectionString("TicketDb"); //appsettings.json
     }
 
     /// <summary>
@@ -48,9 +50,9 @@ public class TicketAccessor : ITicketAccessor
     /// <returns>
     /// The ticket sale if found, otherwise null.
     /// </returns>
-    public async Task<TicketSale> GetTicketByIdAsync(int id)
+    public async Task<TicketSale?> GetTicketByIdAsync(int id)
     {
-        using (var connection = new SqliteConnection(_conectionString))
+        using (var connection = new SqliteConnection(_connectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
@@ -78,7 +80,7 @@ public class TicketAccessor : ITicketAccessor
     /// </returns>
     public async Task<IEnumerable<TicketSale>> GetAllTicketsAsync()
     {
-        using (var connection = new SqliteConnection(_conectionString))
+        using (var connection = new SqliteConnection(_connectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
@@ -105,7 +107,7 @@ public class TicketAccessor : ITicketAccessor
     public async Task<IEnumerable<TicketSale>> GetTicketsByStudentEmailAsync(string studentEmail)
     {
         var tickets = new List<TicketSale>();
-        using (var connection = new SqliteConnection($"Data Source={_conectionString}"))
+        using (var connection = new SqliteConnection(_connectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
@@ -131,7 +133,7 @@ public class TicketAccessor : ITicketAccessor
     }
 
     /// <summary>
-    /// Fetches ticket sales by event name from DB.    
+    /// Fetches ticket sales by event name from DBs.    
     /// </summary>
     /// <param name="eventName"></param>
     /// <returns>
@@ -139,7 +141,7 @@ public class TicketAccessor : ITicketAccessor
     /// </returns>
     public async Task<IEnumerable<TicketSale>> GetTicketsByEventNameAsync(string eventName)
     {
-        using (var connection = new SqliteConnection(_conectionString))
+        using (var connection = new SqliteConnection(_connectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
@@ -166,7 +168,7 @@ public class TicketAccessor : ITicketAccessor
     /// </returns>
     public async Task<int> CreateTicketAsync(TicketSale ticket)
     {
-        using (var connection = new SqliteConnection(_conectionString))
+        using (var connection = new SqliteConnection(_connectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
@@ -192,30 +194,31 @@ public class TicketAccessor : ITicketAccessor
     /// <returns>
     /// True if the ticket was updated, false if the ID didn't exist.
     /// </returns>
-    public async Task UpdateTicketAsync(TicketSale ticket)
+    public async Task<bool> UpdateTicketAsync(TicketSale ticket)
     {
         using var connection = new SqliteConnection(_connectionString);
-        await connection.OpenAsync();
-        
-        var command = connection.CreateCommand();
-        command.CommandText = @"
-            UPDATE TicketSales 
-            SET StudentEmail = @StudentEmail, 
-                EventName = @EventName, 
-                Price = @Price, 
-                IsPaid = @IsPaid, 
-                PurchaseDate = @PurchaseDate 
-            WHERE Id = @Id";
-        command.Parameters.AddWithValue("@Id", ticket.Id);
-        command.Parameters.AddWithValue("@StudentEmail", ticket.StudentEmail);
-        command.Parameters.AddWithValue("@EventName", ticket.EventName);
-        command.Parameters.AddWithValue("@Price", ticket.Price);
-        command.Parameters.AddWithValue("@IsPaid", ticket.IsPaid ? 1 : 0);
-        command.Parameters.AddWithValue("@PurchaseDate", ticket.PurchaseDate.ToString("o"));
+        {
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE TicketSales 
+                SET StudentEmail = @StudentEmail, 
+                    EventName = @EventName, 
+                    Price = @Price, 
+                    IsPaid = @IsPaid, 
+                    PurchaseDate = @PurchaseDate 
+                WHERE Id = @Id";
+            command.Parameters.AddWithValue("@Id", ticket.Id);
+            command.Parameters.AddWithValue("@StudentEmail", ticket.StudentEmail);
+            command.Parameters.AddWithValue("@EventName", ticket.EventName);
+            command.Parameters.AddWithValue("@Price", ticket.Price);
+            command.Parameters.AddWithValue("@IsPaid", ticket.IsPaid ? 1 : 0);
+            command.Parameters.AddWithValue("@PurchaseDate", ticket.PurchaseDate.ToString("o"));
 
-        int affectedRows = await command.ExecuteNonQueryAsync();
+            int affectedRows = await command.ExecuteNonQueryAsync();
 
-        return affectedRows > 0;
+            return affectedRows > 0;
+        }
     }
 
     /// <summary>
@@ -225,15 +228,14 @@ public class TicketAccessor : ITicketAccessor
     /// <returns>
     /// True if the ticket was deleted, false if the ID didn't exist.
     /// </returns>
-    public async Task DeleteTicketAsync(int id)
+    public async Task<bool> DeleteTicketAsync(int id)
     {
-        using (var connection = new SqliteConnection($"Data Source={_conectionString}"))
+        using (var connection = new SqliteConnection(_connectionString))
         {
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText = "DELETE FROM TicketSales WHERE Id = @Id";
             command.Parameters.AddWithValue("@Id", id);
-            await command.ExecuteNonQueryAsync();
             int affectedRows = await command.ExecuteNonQueryAsync();
             return affectedRows > 0;
         }

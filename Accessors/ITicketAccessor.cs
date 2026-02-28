@@ -3,18 +3,15 @@
 /// 2.28.2026
 /// Defines the ITicketAccessor interface for accessing ticket sales from a SQLite db.
 /// </summary>
+/// <remarks>
+/// AKS
+/// 2.28.2026
+/// </remarks>
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RaikesHacks_Project_S26.Model;
 
-/// <summary>
-/// Interface for accessing ticket sales from a SQLite db. Defines methods for CRUD operations and simple queries.
-/// </summary>
-/// <remarks>
-/// AKS
-/// 2.28.2026
-/// </remarks>
 namespace RaikesHacks_Project_S26.Accessors
 {
     public interface ITicketAccessor
@@ -58,13 +55,13 @@ namespace RaikesHacks_Project_S26.Accessors
         /// </summary>
         /// <param name="ticket"></param>
         /// <returns></returns>
-        Task UpdateTicketAsync(TicketSale ticket);
+        Task<bool> UpdateTicketAsync(TicketSale ticket);
 
         /// <summary>
         /// Deletes a ticket sale from the DB by ID. Returns true if delete was successful, false if ticket not found.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task DeleteTicketAsync(int id);
+        Task<bool> DeleteTicketAsync(int id);
     }
 }
