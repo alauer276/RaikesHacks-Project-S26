@@ -110,7 +110,7 @@ function App() {
           >
             {showForm ? 'Close Form' : 'Add New Item'}
           </button>
-
+          </div>
         {showForm && (
           <div className="form-container">
             <input
