@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css'
 
 function App() {
@@ -10,14 +10,38 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilters, setSelectedFilters] = useState(new Set());
   const [items, setItems] = useState([]);
-  const [description, setDescription] = useState('');
+  const [studentEmail, setStudentEmail] = useState('');
+  const [eventName, setEventName] = useState('');
+  const [eventType, setEventType] = useState('');
   const [price, setPrice] = useState('');
 
   const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music'];
   const filterContainerRef = useRef(null);
 
+  // IMPORTANT: Update this port to match your ASP.NET Core launch settings (e.g., 5000, 5106, 7000)
+  const API_URL = 'http://localhost:5106/api/tickets';
+
   useEffect(() => {
-    // Effect to handle clicking outside the filter dropdown to close it
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Data could not be fetched!');
+        const data = await response.json();
+        const mappedItems = data.map(ticket => ({
+          id: ticket.id,
+          description: ticket.eventName,
+          price: ticket.price,
+          eventType: ticket.eventType,
+        }));
+        setItems(mappedItems);
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      }
+    };
+    fetchTickets();
+  }, []);
+
+  useEffect(() => {
     function handleClickOutside(event) {
       if (filterContainerRef.current && !filterContainerRef.current.contains(event.target)) {
         setShowFilters(false);
@@ -29,7 +53,6 @@ function App() {
     };
   }, [filterContainerRef]);
 
-  // Event Handlers
   const handleFilterSelect = (filter) => {
     const newFilters = new Set(selectedFilters);
     if (newFilters.has(filter)) {
@@ -40,33 +63,55 @@ function App() {
     setSelectedFilters(newFilters);
   };
 
-  const handleAddItem = () => {
-    if (description && price) {
+  const handleAddItem = async () => {
+    if (eventName && price) {
       const newItem = {
-        id: Date.now(), // simple unique id
-        description,
-        price: parseFloat(price).toFixed(2)
+        studentEmail: studentEmail || 'user@example.com',
+        eventName: eventName,
+        eventType: eventType,
+        price: parseFloat(price),
+        isPaid: false,
+        purchaseDate: new Date().toISOString(),
       };
-      setItems([...items, newItem]);
-      // Clear inputs
-      setDescription('');
-      setPrice('');
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newItem)
+        });
+        if (!response.ok) throw new Error('Error creating ticket');
+        const createdTicket = await response.json();
+
+        setItems([...items, {
+          id: createdTicket.id,
+          description: createdTicket.eventName,
+          price: createdTicket.price,
+          eventType: createdTicket.eventType,
+        }]);
+
+        setStudentEmail('');
+        setEventName('');
+        setEventType('');
+        setPrice('');
+        setShowForm(false);
+      } catch (error) {
+        console.error('Error adding item:', error);
+        alert('Failed to add item. Please try again.');
+      }
     } else {
-      alert('Please enter both description and price.');
+      alert('Please enter both event name and price.');
     }
   };
 
-  // Filter and sort items logic
-  let displayedItems = items.filter(item => {
-    const matchesSearch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = selectedFilters.size === 0 || selectedFilters.has(item.description);
-    return matchesSearch && matchesFilter;
-  });
-
-  // If a filter is applied, sort the results from cheapest to highest price
-  if (selectedFilters.size > 0) {
-    displayedItems.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-  }
+  // Fixed filter logic: now filters on eventType instead of description
+  const displayedItems = items
+    .filter(item => {
+      const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
+      const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
+      return filterMatch && searchMatch;
+    })
+    .sort((a, b) => a.price - b.price);
 
   return (
     <>
@@ -75,11 +120,11 @@ function App() {
         <div className="search-group">
           <input
             type="text"
-            placeholder="Search topics..."
+            placeholder="Search events..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button onClick={() => alert('Searching for: ' + searchTerm)}>Search</button>
+          <button>Search</button>
         </div>
         <div className="filter-container" ref={filterContainerRef}>
           <button className="filter-btn" onClick={() => setShowFilters(!showFilters)}>
@@ -102,7 +147,6 @@ function App() {
       </nav>
 
       <main className="main-container">
-        {/* Left Column Wrapper */}
         <div className="sidebar">
           <button
             className={`add-item-btn ${showForm ? 'close' : ''}`}
@@ -110,36 +154,53 @@ function App() {
           >
             {showForm ? 'Close Form' : 'Add New Item'}
           </button>
-          </div>
-        {showForm && (
-          <div className="form-container">
-            <input
-              type="text"
-              placeholder="Event Name"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Price ($)"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-            <button onClick={handleAddItem}>Save Item</button>
-          </div>
-        )}
+
+          {showForm && (
+            <div className="form-container">
+              <input
+                type="text"
+                placeholder="Student Email... user@huskers.unl.edu"
+                value={studentEmail}
+                onChange={(e) => setStudentEmail(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Event Name"
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
+              />
+              <select
+                value={eventType}
+                onChange={(e) => setEventType(e.target.value)}
+                className="dropdown-select"
+              >
+                <option value="">Select Event Type</option>
+                {filterOptions.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+              <input
+                type="number"
+                placeholder="Price ($)"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              <button onClick={handleAddItem}>Save Item</button>
+            </div>
+          )}
+        </div>
 
         <div className="item-list">
           {displayedItems.map(item => (
             <div key={item.id} className="item-card">
               <span className="item-text">{item.description}</span>
-              <span className="item-price">${item.price}</span>
+              <span className="item-price">${item.price.toFixed(2)}</span>
             </div>
           ))}
         </div>
       </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
