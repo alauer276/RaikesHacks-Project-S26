@@ -11,6 +11,4 @@ namespace RaikesHacks_Project_S26.Model
         public bool IsPaid { get; set; }
         public DateTime PurchaseDate { get; set; }
     }
-
-    
 }
