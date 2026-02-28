@@ -25,10 +25,16 @@ namespace RaikesHacks_Project_S26.Controllers
         /// </summary>
         /// <returns>A list of all ticket sales.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TicketSale>>> GetAllTickets()
+        public async Task<ActionResult<IEnumerable<TicketSale>>> GetAllTickets([FromQuery] string? sortBy)
         {
             _logger.LogInformation("Getting all tickets");
             var tickets = await _ticketAccessor.GetAllTicketsAsync();
+
+            if (!string.IsNullOrEmpty(sortBy) && sortBy.Equals("price", StringComparison.OrdinalIgnoreCase))
+            {
+                tickets = tickets.OrderBy(t => t.Price);
+            }
+
             return Ok(tickets);
         }
 

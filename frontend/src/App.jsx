@@ -14,6 +14,7 @@ function App() {
   const [eventName, setEventName] = useState('');
   const [eventType, setEventType] = useState('');
   const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('Football');
 
   const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music'];
   const filterContainerRef = useRef(null);
