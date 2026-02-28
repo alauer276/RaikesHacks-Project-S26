@@ -90,30 +90,35 @@ function App() {
       </nav>
 
       <main className="main-container">
-        <button
-          className={`add-item-btn ${showForm ? 'close' : ''}`}
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? 'Close Form' : 'Add New Item'}
-        </button>
+        {/* Left Column Wrapper */}
+        <div className="sidebar">
+          <button
+            className={`add-item-btn ${showForm ? 'close' : ''}`}
+            onClick={() => setShowForm(!showForm)}
+          >
+            {showForm ? 'Close Form' : 'Add New Item'}
+          </button>
 
-        {showForm && (
-          <div className="form-container">
-            <input
-              type="text"
-              placeholder="Item Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Price ($)"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-            <button onClick={handleAddItem}>Save Item</button>
-          </div>
-        )}
+          {showForm && (
+            <div className="form-container">
+              <input
+                type="text"
+                placeholder="Item Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Price ($)"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              <button onClick={handleAddItem}>Save Item</button>
+            </div>
+          )}
+        </div>
+
+        {/* Right Column Content */}
 
         <div className="item-list">
           {items.map(item => (

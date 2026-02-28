@@ -97,9 +97,18 @@ body {
 
 /* Main Content */
 .main-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
   padding: 20px;
 }
 
+.sidebar {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
 .add-item-btn {
   padding: 10px 20px;
   background: #27ae60;
@@ -126,6 +135,7 @@ body {
 }
 
 .item-list {
+  flex-grow: 1;
   display: grid;
   gap: 15px;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
