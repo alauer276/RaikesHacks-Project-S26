@@ -212,7 +212,7 @@ function App() {
 
         <div className="item-list">
           {displayedItems.map(item => (
-            <div key={item.id} className="item-card">
+            <div key={item.id} className="item-card" onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span className="item-text">{item.description}</span>
                 <span className="item-type">{item.eventType}</span>
