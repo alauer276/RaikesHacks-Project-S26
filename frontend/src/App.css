@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background-color: #c7c8ca; /* A neutral background for the main content */
+  background-color: #1e1f26; /* A neutral background for the main content */
 }
 
 /* Navbar */
@@ -83,7 +83,7 @@ body {
 }
 
 .dropdown-item:hover {
-  background: #f1f1f1;
+  background: #d00000;
 }
 
 .dropdown-item.selected {
