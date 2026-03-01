@@ -15,6 +15,7 @@ function App() {
   const [eventName, setEventName] = useState('');
   const [eventType, setEventType] = useState('');
   const [price, setPrice] = useState('');
+  const [budget, setBudget] = useState(10000);
   const [category, setCategory] = useState('Football');
   const [showMyOffers, setShowMyOffers] = useState(false);
   const [myOffersEmail, setMyOffersEmail] = useState('');
@@ -122,12 +123,16 @@ function App() {
     }
   };
 
+  // Calculate max price for the slider
+  const maxPrice = items.reduce((max, item) => (item.price > max ? item.price : max), 0);
+
   // Fixed filter logic: now filters on eventType instead of description
   const displayedItems = items
   .filter(item => {
     const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
     const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return filterMatch && searchMatch;
+    const budgetMatch = item.price <= budget;
+    return filterMatch && searchMatch && budgetMatch;
   })
   .sort((a, b) => a.price - b.price);
   
@@ -198,6 +203,19 @@ function App() {
           </button>
           {showFilters && (
             <div className="dropdown-menu">
+              <div style={{ padding: '15px', borderBottom: '1px solid #eee' }}>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: 'bold', fontSize: '14px' }}>
+                  Max Price: ${Math.min(budget, maxPrice).toFixed(0)}
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max={maxPrice || 100}
+                  value={Math.min(budget, maxPrice)}
+                  onChange={(e) => setBudget(Number(e.target.value))}
+                  style={{ width: '100%', cursor: 'pointer' }}
+                />
+              </div>
               {filterOptions.map(filter => (
                 <div
                   key={filter}
@@ -351,19 +369,17 @@ function App() {
               {myOffers.length === 0 ? (
                 <p style={{ color: '#7f8c8d', fontStyle: 'italic' }}>No offers yet.</p>
               ) : (
-                <>
-                  <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '12px 0' }} />
-                  <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {myOffers.map((offer, index) => (
-                      <div key={offer.id ?? index} style={{ padding: '12px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #eee' }}>
-                        <div style={{ fontWeight: '600', color: '#2c3e50' }}>{offer.ticketName}</div>
-                        <div style={{ color: '#4a4a6a', fontSize: '14px' }}>{offer.buyerName}</div>
-                        <div style={{ color: '#4a4a6a', fontSize: '14px' }}>{offer.buyerPhone}</div>
-                        <div style={{ color: '#aaa', fontSize: '12px' }}>{new Date(offer.submittedAt).toLocaleDateString()}</div>
-                      </div>
-                    ))}
+                myOffers.map(offer => (
+                  <div key={offer.id} className="admin-list-item" style={{ marginBottom: '10px' }}>
+                    <div>
+                      <span className="admin-item-name"><p style={{ paddingLeft: '16px' }}>{offer.ticketName}</p></span>
+                      <span className="admin-item-type"><p style={{ paddingLeft: '0 16px' }}>{offer.buyerName}</p>{offer.buyerPhone}</span>
+                    </div>
+                    <span style={{ fontSize: '12px', color: '#aaa' }}>
+                      {new Date(offer.submittedAt).toLocaleDateString()}
+                    </span>
                   </div>
-                </>
+                ))
               )}
             </div>
           </div>
