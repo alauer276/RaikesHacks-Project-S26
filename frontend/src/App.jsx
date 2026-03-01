@@ -69,7 +69,7 @@ function App() {
     const isEmailValid = allowedDomains.some(domain => studentEmail.toLowerCase().endsWith(domain));
 
     if (!studentEmail || !isEmailValid) {
-      alert('It is not the correct email. Please use an email ending in a UNL email');
+      alert(' Please use an UNL email');
       return;
     }
 
