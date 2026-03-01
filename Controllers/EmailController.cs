@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RaikesHacks_Project_S26.Accessors;
 using RaikesHacks_Project_S26.Model;
-using MailKit.Net.Smtp;
-using MimeKit;
 
 namespace RaikesHacks_Project_S26.Controllers 
 {
@@ -14,15 +12,15 @@ namespace RaikesHacks_Project_S26.Controllers
     public class EmailController : ControllerBase
     {
         private readonly ITicketAccessor _ticketAccessor;
-        private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
         /// <summary>
         /// Initializes a new instance of the EmailController class.
         /// </summary>
-        public EmailController(ITicketAccessor ticketAccessor, IConfiguration configuration)
+        public EmailController(ITicketAccessor ticketAccessor, IEmailService emailService)
         {
             _ticketAccessor = ticketAccessor;
-            _configuration = configuration;
+            _emailService = emailService;
         }
         
         /// <summary>
@@ -43,34 +41,7 @@ namespace RaikesHacks_Project_S26.Controllers
 
             try
             {
-                var message = new MimeMessage();
-                var fromAddress = _configuration["Smtp:FromAddress"] ?? "noreply@raikeshacks.com";
-                message.From.Add(new MailboxAddress("Raikes Hacks Ticket System", fromAddress));
-                message.To.Add(new MailboxAddress("", ticket.StudentEmail));
-                message.Subject = $"Interest in your ticket: {ticket.EventName}";
-
-                message.Body = new TextPart("plain")
-                {
-                    Text = $@"Hello,
-
-You have a potential buyer for your {ticket.EventName} ticket!
-
-Buyer Contact:
-Email: {request.BuyerEmail}
-Phone: {request.BuyerPhone}
-
-Contact the buyer for more information to finalize the sale.
-
-Best,
-RaikesHacks '26 Team"
-                };
-
-                using var client = new SmtpClient();
-                await client.ConnectAsync(_configuration["Smtp:Host"], int.Parse(_configuration["Smtp:Port"] ?? "587"), MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(_configuration["Smtp:Username"], _configuration["Smtp:Password"]);
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
-
+                await _emailService.SendInterestEmailAsync(ticket.StudentEmail, ticket.EventName, request);
                 return Ok("Email sent successfully.");
             }
             catch (Exception ex)
