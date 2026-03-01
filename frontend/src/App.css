@@ -340,3 +340,24 @@ body {
   background: #eaf3fb;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+.confirm-card {
+  background: white;
+  border: 1.5px solid #ccc;
+  min-width: 300px;
+  max-width: 420px;
+}
+
+.confirm-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 12px;
+}
+
+.confirm-body {
+  color: #4a4a6a;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
