@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css'
 import unlLogo from './assets/pngegg.png';
 
+// Ticket types available for filtering, corresponding to the backend TicketType enum
+const filterOptions = ['Football', 'Volleyball', 'MensBasketball', 'WomensBasketball', 'Baseball', 'Music', 'Softball'];
+const API_BASE_URL = 'http://localhost:5106/api';
+
 function App() {
   // State for UI elements
   const [showFilters, setShowFilters] = useState(false);
@@ -17,25 +21,22 @@ function App() {
   const [price, setPrice] = useState('');
   const [eventDate, setEventDate] = useState('');
   const [budget, setBudget] = useState(10000);
-  const [category, setCategory] = useState('Football');
   const [showMyOffers, setShowMyOffers] = useState(false);
   const [myOffersEmail, setMyOffersEmail] = useState('');
   const [myOffers, setMyOffers] = useState([]);
-  const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music'];
   const filterContainerRef = useRef(null);
   const [showMyListings, setShowMyListings] = useState(false);
   const [myListingsEmail, setMyListingsEmail] = useState('');
   const [myListings, setMyListings] = useState([]);
 
-  // IMPORTANT: Update this port to match your ASP.NET Core launch settings (e.g., 5000, 5106, 7000)
-  const API_URL = 'http://localhost:5106/api/tickets';
-
+  // Effect to fetch all tickets from the API when the component mounts
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_BASE_URL}/tickets`);
         if (!response.ok) throw new Error('Data could not be fetched!');
         const data = await response.json();
+        // Map the backend data structure to the frontend item format
         const mappedItems = data.map(ticket => ({
           id: ticket.id,
           description: ticket.eventName,
@@ -51,6 +52,7 @@ function App() {
     fetchTickets();
   }, []);
 
+  // Effect to handle clicks outside the filter dropdown to close it automatically
   useEffect(() => {
     function handleClickOutside(event) {
       if (filterContainerRef.current && !filterContainerRef.current.contains(event.target)) {
@@ -63,12 +65,14 @@ function App() {
     };
   }, [filterContainerRef]);
 
+  // State for modal interactions and offer handling
   const [selectedItem, setSelectedItem] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [buyerName, setBuyerName] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
 
 
+  // Toggles a filter category on or off in the selected set
   const handleFilterSelect = (filter) => {
     const newFilters = new Set(selectedFilters);
     if (newFilters.has(filter)) {
@@ -79,7 +83,9 @@ function App() {
     setSelectedFilters(newFilters);
   };
 
+  // Handles the creation of a new ticket listing
   const handleAddItem = async () => {
+    // Validate that the email belongs to a recognized university domain
     const allowedDomains = ['@nebraska.edu', '@huskers.unl.edu', '@unl.edu'];
     const isEmailValid = allowedDomains.some(domain => studentEmail.toLowerCase().endsWith(domain));
 
@@ -89,6 +95,7 @@ function App() {
     }
 
     if (eventName && price) {
+      // Construct the new ticket object
       const newItem = {
         studentEmail: studentEmail,
         eventName: eventName,
@@ -100,7 +107,8 @@ function App() {
       };
 
       try {
-        const response = await fetch(API_URL, {
+        // Send POST request to create the ticket
+        const response = await fetch(`${API_BASE_URL}/tickets`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newItem)
@@ -108,6 +116,7 @@ function App() {
         if (!response.ok) throw new Error('Error creating ticket');
         const createdTicket = await response.json();
 
+        // Update local state with the newly created ticket to display it immediately
         setItems([...items, {
           id: createdTicket.id,
           description: createdTicket.eventName,
@@ -116,6 +125,7 @@ function App() {
           eventDate: createdTicket.eventDate,
         }]);
 
+        // Reset form fields and close the form
         setStudentEmail('');
         setEventName('');
         setEventType('');
@@ -134,7 +144,7 @@ function App() {
   // Calculate max price for the slider
   const maxPrice = items.reduce((max, item) => (item.price > max ? item.price : max), 0);
 
-  // Fixed filter logic: now filters on eventType instead of description
+  // Filter items based on active categories, search text, and budget cap, then sort by price
   const displayedItems = items
   .filter(item => {
     const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
@@ -144,6 +154,7 @@ function App() {
   })
   .sort((a, b) => a.price - b.price);
   
+  // Submits a purchase offer for a selected ticket
   const handleSendOffer = async () => {
       if (!buyerName || !buyerPhone) {
         alert('Please enter your name and phone number.');
@@ -151,7 +162,8 @@ function App() {
       }
 
       try {
-        const response = await fetch('http://localhost:5106/api/offers', {
+        // Post the offer details to the backend
+        const response = await fetch(`${API_BASE_URL}/offers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -167,6 +179,7 @@ function App() {
           return;
         }
 
+        // Close the modal and show the confirmation message
         setSelectedItem(null);
         setShowConfirmation(true);
         setBuyerName('');
@@ -176,9 +189,11 @@ function App() {
       }
     };
 
+    // Fetches offers submitted by the current user based on their email
     const handleFetchMyOffers = async () => {
       try {
-        const response = await fetch(`http://localhost:5106/api/offers/my-offers?email=${encodeURIComponent(myOffersEmail)}`);
+        // Retrieve offers associated with the provided email
+        const response = await fetch(`${API_BASE_URL}/offers/my-offers?email=${encodeURIComponent(myOffersEmail)}`);
         if (!response.ok) throw new Error('Failed to fetch offers');
         const data = await response.json();
         console.log('Offers data:', data);
@@ -188,9 +203,11 @@ function App() {
       }
     };
 
+    // Deletes a specific offer by ID
     const handleDeleteOffer = async (offerId) => {
       try {
-        const response = await fetch(`http://localhost:5106/api/offers/${offerId}`, {
+        // Delete the offer and update the local list
+        const response = await fetch(`${API_BASE_URL}/offers/${offerId}`, {
           method: 'DELETE'
         });
         if (!response.ok) throw new Error('Failed to delete offer');
@@ -200,9 +217,11 @@ function App() {
       }
     };
 
+    // Fetches tickets listed by the current user based on their email
     const handleFetchMyListings = async () => {
       try {
-        const response = await fetch(`http://localhost:5106/api/tickets/by-email?email=${encodeURIComponent(myListingsEmail)}`);
+        // Retrieve tickets listed by the provided email
+        const response = await fetch(`${API_BASE_URL}/tickets/by-email?email=${encodeURIComponent(myListingsEmail)}`);
         if (!response.ok) throw new Error('Failed to fetch listings');
         const data = await response.json();
         console.log('Listings data:', data);
@@ -212,9 +231,11 @@ function App() {
       }
     };
 
+    // Deletes a ticket listing and updates the local state
     const handleDeleteListing = async (ticketId) => {
       try {
-        const response = await fetch(`${API_URL}/${ticketId}`, { method: 'DELETE' });
+        // Delete the ticket listing and remove it from both the listings view and the main feed
+        const response = await fetch(`${API_BASE_URL}/tickets/${ticketId}`, { method: 'DELETE' });
         if (!response.ok) throw new Error('Failed to delete listing');
         setMyListings(myListings.filter(l => l.id !== ticketId));
         setItems(items.filter(i => i.id !== ticketId));

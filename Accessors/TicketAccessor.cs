@@ -1,6 +1,5 @@
 using Microsoft.Data.Sqlite;
 using RaikesHacks_Project_S26.Model;
-using System.Data;
 
 namespace RaikesHacks_Project_S26.Accessors
 {
@@ -58,6 +57,7 @@ namespace RaikesHacks_Project_S26.Accessors
             {
                 connection.Open();
                 var command = connection.CreateCommand();
+                // Create the TicketSales table with the required schema if it does not already exist
                 command.CommandText =
                 @"
                     CREATE TABLE IF NOT EXISTS TicketSales (
@@ -156,60 +156,6 @@ namespace RaikesHacks_Project_S26.Accessors
         }
 
         /// <summary>
-        /// Fetches ticket sales by event name from DBs.    
-        /// </summary>
-        /// <param name="eventName"></param>
-        /// <returns>
-        /// A list of ticket sales for the given event name.
-        /// </returns>
-        public async Task<IEnumerable<TicketSale>> GetTicketsByEventNameAsync(string eventName)
-        {
-            using (var connection = new SqliteConnection(_connectionString))
-            {
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, StudentEmail, EventName, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE EventName = @EventName";
-                command.Parameters.AddWithValue("@EventName", eventName);
-                using (var reader = await command.ExecuteReaderAsync())
-                {
-                    var tickets = new List<TicketSale>();
-                    while (await reader.ReadAsync())
-                    {
-                        tickets.Add(MapReaderToTicket(reader));
-                    }
-                    return tickets;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Fetches ticket sales by ticket type from DB.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns>
-        /// A list of ticket sales for the given ticket type.
-        /// </returns>
-        public async Task<IEnumerable<TicketSale>> GetTicketsByTypeAsync(TicketType type)
-        {
-            using (var connection = new SqliteConnection(_connectionString))
-            {
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, StudentEmail, EventName, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE TicketType = @TicketType";
-                command.Parameters.AddWithValue("@TicketType", (int)type);
-                using (var reader = await command.ExecuteReaderAsync())
-                {
-                    var tickets = new List<TicketSale>();
-                    while (await reader.ReadAsync())
-                    {
-                        tickets.Add(MapReaderToTicket(reader));
-                    }
-                    return tickets;
-                }
-            }
-        }
-
-        /// <summary>
         /// Creates a new ticket sale in the DB.
         /// </summary>
         /// <param name="ticket"></param>
@@ -222,6 +168,7 @@ namespace RaikesHacks_Project_S26.Accessors
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
+                // Insert the new ticket and immediately retrieve the auto-generated ID
                 command.CommandText =
                 @"
                     INSERT INTO TicketSales (StudentEmail, EventName, Price, TicketType, IsPaid, PurchaseDate)
@@ -234,6 +181,7 @@ namespace RaikesHacks_Project_S26.Accessors
                 command.Parameters.AddWithValue("@TicketType", (int)ticket.Type);
                 command.Parameters.AddWithValue("@IsPaid", ticket.IsPaid ? 1 : 0);
                 command.Parameters.AddWithValue("@PurchaseDate", ticket.PurchaseDate.ToString("o"));
+                // ExecuteScalarAsync returns the first column of the first row, which is the new ID here
                 return Convert.ToInt32(await command.ExecuteScalarAsync());
             }
         }
@@ -268,6 +216,7 @@ namespace RaikesHacks_Project_S26.Accessors
                 command.Parameters.AddWithValue("@IsPaid", ticket.IsPaid ? 1 : 0);
                 command.Parameters.AddWithValue("@PurchaseDate", ticket.PurchaseDate.ToString("o"));
 
+                // ExecuteNonQueryAsync returns the number of rows affected; if > 0, the update was successful
                 int affectedRows = await command.ExecuteNonQueryAsync();
 
                 return affectedRows > 0;
