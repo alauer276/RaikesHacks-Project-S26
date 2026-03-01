@@ -24,7 +24,6 @@ function App() {
   const [showMyOffers, setShowMyOffers] = useState(false);
   const [myOffersEmail, setMyOffersEmail] = useState('');
   const [myOffers, setMyOffers] = useState([]);
-  const filterOptions = ['Football', 'Volleyball', 'MensBasketball', 'WomensBasketball', 'Baseball', 'Music', 'Softball'];
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const filterContainerRef = useRef(null);
@@ -104,7 +103,7 @@ function App() {
       return;
     }
 
-    if (eventName && price) {
+    if (eventName && price && eventDate) {
       // Construct the new ticket object
       const newItem = {
         studentEmail: studentEmail,
@@ -147,7 +146,7 @@ function App() {
         alert('Failed to add item. Please try again.');
       }
     } else {
-      alert('Please enter both event name and price.');
+      alert('Please enter event name, date, and price.');
     }
   };
 
