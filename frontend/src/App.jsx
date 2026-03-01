@@ -55,6 +55,7 @@ function App() {
   }, [filterContainerRef]);
 
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleFilterSelect = (filter) => {
     const newFilters = new Set(selectedFilters);
@@ -212,7 +213,7 @@ function App() {
 
         <div className="item-list">
           {displayedItems.map(item => (
-            <div key={item.id} className="item-card">
+            <div key={item.id} className="item-card" onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span className="item-text">{item.description}</span>
                 <span className="item-type">{item.eventType}</span>
@@ -236,8 +237,23 @@ function App() {
               </div>
 
               <div className="modal-footer">
-                <button className="modal-send-btn">Send Offer</button>
+                <button className="modal-send-btn" onClick={() => {
+                    setSelectedItem(null);
+                    setShowConfirmation(true);
+                  }}>Send Offer</button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {showConfirmation && (
+          <div className="modal-overlay" onClick={() => setShowConfirmation(false)}>
+            <div className="modal-card confirm-card" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => setShowConfirmation(false)}>✕</button>
+              <h2 className="confirm-title">Message Sent!</h2>
+              <p className="confirm-body">
+                Email has been sent, wait for a message from the ticket holder for further ticket discussions.
+              </p>
             </div>
           </div>
         )}
