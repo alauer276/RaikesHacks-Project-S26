@@ -87,12 +87,12 @@ body {
 }
 
 .dropdown-item.selected {
-  background: #3498db;
+  background: #d00000;
   color: white;
 }
 
 .dropdown-item.selected:hover {
-  background: #3498db; /* Keep color on hover when selected */
+  background: #d00000; /* Keep color on hover when selected */
 }
 
 /* Main Content */
