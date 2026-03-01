@@ -1,18 +1,21 @@
-/// <summary>
-/// Ticket sale model class representing a ticket sale record in the database. Contains properties for ID,
-/// student email, event name, price, payment status, and purchase date.
-/// </summary>
-/// <remarks>
-/// AKS
-/// 2.28.2026
-/// </remarks>
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace RaikesHacks_Project_S26.Model
 {
+    /// <summary>
+    /// Ticket sale model class representing a ticket sale record in the database. Contains properties for ID,
+    /// student email, event name, price, payment status, and purchase date.
+    /// </summary>
+    /// <remarks>
+    /// AKS
+    /// 2.28.2026
+    /// </remarks>
     public class TicketSale
     {
         public int Id { get; set; }
+
+        [RegularExpression(@"^[^@\s]+@(nebraska\.edu|unl\.edu|huskers\.unl\.edu)$", ErrorMessage = "Email must be a valid nebraska.edu, unl.edu, or huskers.unl.edu address.")]
         public string StudentEmail { get; set; } = string.Empty;
         public string EventName { get; set; } = string.Empty;
         public decimal Price { get; set; }
