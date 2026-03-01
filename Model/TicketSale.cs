@@ -17,8 +17,8 @@ namespace RaikesHacks_Project_S26.Model
     {
         Football,
         Volleyball,
-        M. Basketball,
-        W. Basketball,
+        MensBasketball,
+        WomensBasketball,
         Baseball,
         Music,
         Softball

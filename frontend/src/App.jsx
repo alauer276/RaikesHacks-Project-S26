@@ -17,7 +17,7 @@ function App() {
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('Football');
 
-  const filterOptions = ['Football', 'Volleyball', 'M. Basketball', 'W. Basketball', 'Baseball', 'Music','Softball'];
+  const filterOptions = ['Football', 'Volleyball', 'MensBasketball', 'WomensBasketball', 'Baseball', 'Music', 'Softball'];
   const filterContainerRef = useRef(null);
 
   // IMPORTANT: Update this port to match your ASP.NET Core launch settings (e.g., 5000, 5106, 7000)
