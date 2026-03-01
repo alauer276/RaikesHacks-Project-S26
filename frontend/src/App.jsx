@@ -21,7 +21,7 @@ function App() {
   const [showMyOffers, setShowMyOffers] = useState(false);
   const [myOffersEmail, setMyOffersEmail] = useState('');
   const [myOffers, setMyOffers] = useState([]);
-  const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music'];
+  const filterOptions = ['Football', 'Volleyball', 'MensBasketball', 'WomensBasketball', 'Baseball', 'Music', 'Softball'];
   const filterContainerRef = useRef(null);
 
   // IMPORTANT: Update this port to match your ASP.NET Core launch settings (e.g., 5000, 5106, 7000)
