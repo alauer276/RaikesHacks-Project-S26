@@ -54,6 +54,8 @@ function App() {
     };
   }, [filterContainerRef]);
 
+  const [selectedItem, setSelectedItem] = useState(null);
+
   const handleFilterSelect = (filter) => {
     const newFilters = new Set(selectedFilters);
     if (newFilters.has(filter)) {
@@ -210,12 +212,33 @@ function App() {
 
         <div className="item-list">
           {displayedItems.map(item => (
-            <div key={item.id} className="item-card">
-              <span className="item-text">{item.description}</span>
-              <span className="item-price">${item.price.toFixed(2)}</span>
+            <div key={item.id} className="item-card" onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
+            <span className="item-text">{item.description}</span>
+            <span className="item-price">${(item.price ?? 0).toFixed(2)}</span>
             </div>
           ))}
         </div>
+        {selectedItem && (
+          <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
+            <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => setSelectedItem(null)}>✕</button>
+              
+              <h2 className="modal-title">{selectedItem.description}</h2>
+              <p className="modal-type">{selectedItem.eventType}</p>
+              <p className="modal-price">${(selectedItem.price ?? 0).toFixed(2)}</p>
+
+              <div className="modal-inputs">
+                <input type="text" placeholder="Your Name" className="modal-input" />
+                <input type="tel" placeholder="Phone Number" className="modal-input" />
+              </div>
+
+              <div className="modal-footer">
+                <button className="modal-send-btn">Send Offer</button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </main>
     </>
   );

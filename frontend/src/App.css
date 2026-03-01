@@ -16,7 +16,7 @@ body {
 }
 
 .home-icon {
-  cursor: pointer;      
+  cursor: pointer;
   font-size: 24px;
 }
 
@@ -83,7 +83,7 @@ body {
 }
 
 .dropdown-item:hover {
-  background: #d00000;
+  background: #f1f1f1;
 }
 
 .dropdown-item.selected {
@@ -152,7 +152,7 @@ body {
 .item-card {
   padding: 20px;
   background: white;
-  border-left: 5px solid #d00000;
+  border-left: 5px solid #27ae60;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   display: flex;
   justify-content: space-between;
@@ -177,4 +177,166 @@ body {
   font-size: 14px;
   font-style: italic;
   margin: 0 10px; /* Add horizontal spacing */
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Content */
+.modal-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  min-width: 340px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  position: relative;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #7f8c8d;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+
+}
+
+.modal-close:hover {
+  background: #f1f1f1;
+  color: #2c3e50
+}
+
+.modal-title {
+  color: #7f8c8d;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 16px;
+}
+
+.modal-price {
+  color: #27ae60;
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0 0 16px;
+}
+
+.modal-card {
+  background: #d6e8f7;
+  border-radius: 24px;
+  padding: 40px;
+  min-width: 400px;
+  max-width: 560px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: slideUp 0.25s ease;
+  border: 1.5px solid #b0cfe8;
+}
+
+.modal-title {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.modal-type {
+  color: #4a4a6a;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.modal-price {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 24px;
+}
+
+.modal-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.modal-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid #8ab0cc;
+  padding: 8px 2px;
+  font-size: 15px;
+  font-style: italic;
+  color: #1a1a2e;
+  outline: none;
+  width: 100%;
+}
+
+.modal-input::placeholder {
+  color: #5a7a96;
+  font-style: italic;
+}
+
+.modal-input:focus {
+  border-bottom-color: #2c6fad;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-send-btn {
+  padding: 12px 28px;
+  background: white;
+  color: #1a1a2e;
+  border: 1.5px solid #8ab0cc;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.modal-send-btn:hover {
+  background: #eaf3fb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
