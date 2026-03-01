@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             // The port should match the React app's port. 5173 is a common Vite default.
-            policy.WithOrigins("http://localhost:5173")
+            policy.AllowAnyOrigin() // Allow any origin for development
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -33,7 +33,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Disable HTTPS redirection to prevent connection issues in dev
 
 app.UseCors();
 
