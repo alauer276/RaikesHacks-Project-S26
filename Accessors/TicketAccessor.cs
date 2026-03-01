@@ -43,6 +43,35 @@ namespace RaikesHacks_Project_S26.Accessors
                 PurchaseDate = DateTime.Parse(reader.GetString(6))
             };
         }
+
+        /// <summary>
+        /// Initializes the database by creating the TicketSales table if it doesn't exist.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns>
+        /// The mapped ticket sale object.
+        /// </returns>
+        private void InitializeDatabase()
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText =
+                @"
+                    CREATE TABLE IF NOT EXISTS TicketSales (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        StudentEmail TEXT NOT NULL,
+                        EventName TEXT NOT NULL,
+                        Price REAL NOT NULL,
+                        TicketType INTEGER NOT NULL,
+                        IsPaid INTEGER NOT NULL,
+                        PurchaseDate TEXT NOT NULL
+                    );
+                ";
+                command.ExecuteNonQuery();
+            }
+        }
         
         /// <summary>
         /// Fetches ticket sale by ID from DB. Returns null if not found.
