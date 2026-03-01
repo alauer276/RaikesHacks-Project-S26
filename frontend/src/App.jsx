@@ -35,11 +35,6 @@ function App() {
     return type;
   };
 
-  const formatTicketType = (type) => {
-    if (type === 'MensBasketball') return 'Mens Basketball';
-    if (type === 'WomensBasketball') return 'Womens Basketball';
-    return type;
-  };
 
   // Effect to fetch all tickets from the API when the component mounts
   useEffect(() => {
