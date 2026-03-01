@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background-color: #f5f1e7; /* A neutral background for the main content */
+  background-color: #c7c8ca; /* A neutral background for the main content */
 }
 
 /* Navbar */
@@ -289,7 +289,7 @@ body {
 .modal-price {
   font-size: 28px;
   font-weight: 600;
-  color: #f00000;
+  color: #27ae60;
   margin: 0 0 24px;
 }
 
@@ -307,7 +307,7 @@ body {
   padding: 8px 2px;
   font-size: 15px;
   font-style: italic;
-  color: #f00000;
+  color: #5a7a96;
   outline: none;
   width: 100%;
 }
