@@ -38,6 +38,14 @@ namespace RaikesHacks_Project_S26.Controllers
             return Ok(tickets);
         }
 
+        [HttpGet("by-email")]
+        public async Task<ActionResult<IEnumerable<TicketSale>>> GetTicketsByEmail([FromQuery] string email)
+        {
+            _logger.LogInformation("Getting tickets for email: {Email}", email);
+            var tickets = await _ticketAccessor.GetTicketsByStudentEmailAsync(email);
+            return Ok(tickets);
+        }
+
         /// <summary>
         /// Gets a specific ticket sale by its ID.
         /// </summary>
