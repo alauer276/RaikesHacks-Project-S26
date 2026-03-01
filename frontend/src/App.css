@@ -11,7 +11,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background-color: #f00000;
+  background-color: #b32f2f;
   color: white;
 }
 
@@ -122,7 +122,7 @@ body {
 }
 
 .add-item-btn.close {
-  background: #c0392b;
+  background: #f00000;
 }
 
 .form-container {
@@ -152,7 +152,7 @@ body {
 .item-card {
   padding: 20px;
   background: white;
-  border-left: 5px solid #27ae60;
+  border-left: 5px solid #f00000;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   display: flex;
   justify-content: space-between;
