@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background-color: #c7c8ca; /* A neutral background for the main content */
+  background-color: #1e1f26; /* A neutral background for the main content */
 }
 
 /* Navbar */
@@ -83,7 +83,7 @@ body {
 }
 
 .dropdown-item:hover {
-  background: #f1f1f1;
+  background: #d00000;
 }
 
 .dropdown-item.selected {
@@ -111,7 +111,7 @@ body {
 }
 .add-item-btn {
   padding: 10px 20px;
-  background: #f00000;
+  background: #b32f2f;
   color: white;
   border: none;
   border-radius: 4px;
@@ -122,7 +122,7 @@ body {
 }
 
 .add-item-btn.close {
-  background: #f00000;
+  background: #b32f2f;
   color: white
 }
 
@@ -153,7 +153,7 @@ body {
 .item-card {
   padding: 20px;
   background: white;
-  border-left: 5px solid #f00000;
+  border-left: 5px solid #d00000;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   display: flex;
   justify-content: space-between;
@@ -277,7 +277,7 @@ body {
   margin: 0 0 4px;
   font-size: 20px;
   font-weight: 700;
-  color: #f00000;
+  color: #d00000;
 }
 
 .modal-type {
