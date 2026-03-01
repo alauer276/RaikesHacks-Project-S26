@@ -104,15 +104,20 @@ function App() {
     }
 
     if (eventName && price && eventDate) {
+      // Robustly parse the date to avoid timezone issues.
+      // This ensures "YYYY-MM-DD" is treated as the start of that day in UTC.
+      const [year, month, day] = eventDate.split('-').map(Number);
+      const utcEventDate = new Date(Date.UTC(year, month - 1, day));
+
       // Construct the new ticket object
       const newItem = {
         studentEmail: studentEmail,
         eventName: eventName,
         type: eventType,
-        EventDate: new Date(eventDate).toISOString(),
+        eventDate: utcEventDate.toISOString(),
         price: parseFloat(price),
         isPaid: false,
-        PurchaseDate: new Date().toISOString(),
+        purchaseDate: new Date().toISOString(),
       };
 
       try {
