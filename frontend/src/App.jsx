@@ -418,8 +418,7 @@ function App() {
             <div key={item.id} className="item-card" onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span className="item-text">{item.description}</span>
-                <span className="item-date">{new Date(item.eventDate).toLocaleDateString()}</span>
-                <span className="item-type">{formatTicketType(item.eventType)}</span>
+                <span className="item-date">{item.eventDate && new Date(item.eventDate).getFullYear() > 1 ? new Date(item.eventDate).toLocaleDateString() : 'Date TBD'}</span>                <span className="item-type">{formatTicketType(item.eventType)}</span>
               </div>
               <span className="item-price">${item.price.toFixed(2)}</span>
             </div>
@@ -431,8 +430,7 @@ function App() {
               <button className="modal-close" onClick={() => setSelectedItem(null)}>✕</button>
               
               <h2 className="modal-title">{selectedItem.description}</h2>
-              <p className="modal-date">Event on: {new Date(selectedItem.eventDate).toLocaleDateString()}</p>
-              <p className="modal-type">{formatTicketType(selectedItem.eventType)}</p>
+              <p className="modal-date">Event on: {selectedItem.eventDate && new Date(selectedItem.eventDate).getFullYear() > 1 ? new Date(selectedItem.eventDate).toLocaleDateString() : 'Date TBD'}</p>              <p className="modal-type">{formatTicketType(selectedItem.eventType)}</p>
               <p className="modal-price">${(selectedItem.price ?? 0).toFixed(2)}</p>
 
               <div className="modal-inputs">
