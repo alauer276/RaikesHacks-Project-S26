@@ -43,14 +43,6 @@ body {
   font-size: 1em;
 }
 
-.search-group button {
-  padding: 10px 20px;
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
-}
 
 /* Filter Dropdown */
 .filter-container {
@@ -122,6 +114,30 @@ body {
   padding: 20px;
   overflow: hidden;
   height: calc(100vh - 80px);
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column; /* Stacks sidebar on top of the list */
+    height: auto;           /* Allow the page to grow naturally */
+    overflow: visible;      /* Let the whole page scroll on mobile */
+  }
+
+  .sidebar {
+    height: auto;
+    padding: 10px;
+    position: sticky;       /* Optional: keeps buttons at the top */
+    top: 0;
+    z-index: 10;
+    background: #1a1a1a;    /* Match your dark theme */
+  }
+
+  .item-list {
+    height: auto;           /* Let the list expand */
+    overflow: visible;
+    grid-template-columns: 1fr; /* Single column for phone screens */
+    padding: 10px;
+  }
 }
 
 .sidebar {

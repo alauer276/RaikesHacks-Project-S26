@@ -292,7 +292,6 @@ function App() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button>Search</button>
         </div>
         <div className="filter-container" ref={filterContainerRef}>
           <button className="filter-btn" onClick={() => setShowFilters(!showFilters)}>
