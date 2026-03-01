@@ -69,7 +69,7 @@ function App() {
     const isEmailValid = allowedDomains.some(domain => studentEmail.toLowerCase().endsWith(domain));
 
     if (!studentEmail || !isEmailValid) {
-      alert('It is not the correct email. Please use an email ending in a UNL email');
+      alert(' Please use an UNL email');
       return;
     }
 
@@ -161,7 +161,10 @@ function App() {
             className={`add-item-btn ${showForm ? 'close' : ''}`}
             onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? 'Close Form' : 'Add New Item'}
+            <span style={{ fontSize: '1.5em', fontWeight: 'bold', marginRight: '8px', verticalAlign: 'middle' }}>
+              {showForm ? '✕' : '+'}
+            </span>
+            <span style={{ verticalAlign: 'middle' }}>{showForm ? 'Close Form' : 'Add New Item'}</span>
           </button>
 
           {showForm && (

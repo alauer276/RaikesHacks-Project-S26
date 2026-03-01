@@ -104,7 +104,7 @@ body {
 }
 
 .sidebar {
-    width: 300px;
+    width: 350px;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
@@ -132,6 +132,14 @@ body {
   border-radius: 8px;
   background: #f8f9fa;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.form-container input,
+.form-container select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .item-list {
