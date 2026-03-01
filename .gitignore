@@ -38,3 +38,6 @@ Log/
 # Secrets
 secrets.json
 appsettings.Development.json
+
+# db
+*.db
