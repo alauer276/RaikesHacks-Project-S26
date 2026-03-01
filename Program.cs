@@ -17,7 +17,6 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
         {
-            // The port should match the React app's port. 5173 is a common Vite default.
             policy.AllowAnyOrigin() // Allow any origin for development
                   .AllowAnyHeader()
                   .AllowAnyMethod();
