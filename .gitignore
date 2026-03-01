@@ -38,4 +38,6 @@ Log/
 # Secrets
 secrets.json
 appsettings.Development.json
-tickets.db
+
+# db
+*.db
