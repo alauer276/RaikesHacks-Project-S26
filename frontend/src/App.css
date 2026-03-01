@@ -169,15 +169,13 @@ body {
 .item-list {
   /* Set a fixed height or use calc to fill remaining screen space */
   height: calc(100vh - 150px); 
-  
-  /* Enable vertical scrolling */
   overflow-y: auto;
-  
-  /* Optional: Smooth out the layout */
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
+  padding: 10px;  
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
   gap: 15px;
+  align-content: start;
+  flex-grow:1;
 }
 
 .item-card {

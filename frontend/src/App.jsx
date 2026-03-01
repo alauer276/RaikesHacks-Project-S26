@@ -4,6 +4,9 @@ import unlLogo from './assets/pngegg.png';
 
 // Ticket types available for filtering, corresponding to the backend TicketType enum
 const filterOptions = ['Football', 'Volleyball', 'MensBasketball', 'WomensBasketball', 'Baseball', 'Music', 'Softball'];
+
+//REPLACE WITH LOCAL http://IPv4:5106/api
+//to find IPv4, use powershell comand ipconfig
 const API_BASE_URL = 'http://10.65.238.92:5106/api';
 
 function App() {
