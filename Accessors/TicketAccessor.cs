@@ -1,6 +1,5 @@
 using Microsoft.Data.Sqlite;
 using RaikesHacks_Project_S26.Model;
-using System.Data;
 
 namespace RaikesHacks_Project_S26.Accessors
 {
@@ -20,7 +19,7 @@ namespace RaikesHacks_Project_S26.Accessors
         /// </summary>
         public TicketAccessor(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("TicketDb")!; //appsettings.json
+            _connectionString = configuration.GetConnectionString("TicketDb")!;
             InitializeDatabase();
         }
 
@@ -47,12 +46,8 @@ namespace RaikesHacks_Project_S26.Accessors
         }
 
         /// <summary>
-        /// Initializes the database by creating the TicketSales table if it doesn't exist. This is called in the constructor to ensure the DB is ready for use.
+        /// Initializes the database by creating the TicketSales table if it doesn't exist.
         /// </summary>
-        /// <param name="reader"></param>
-        /// <returns>
-        /// The mapped ticket sale object.
-        /// </returns>
         private void InitializeDatabase()
         {
             using (var connection = new SqliteConnection(_connectionString))
@@ -106,7 +101,7 @@ namespace RaikesHacks_Project_S26.Accessors
         }
 
         /// <summary>
-        /// Fetches all ticket sales from DB. Note async.
+        /// Fetches all ticket sales from DB.
         /// </summary>
         /// <returns>
         /// A list of all ticket sales.
@@ -131,7 +126,7 @@ namespace RaikesHacks_Project_S26.Accessors
         }
 
         /// <summary>
-        /// Fetches ticket sales by student email from DB. Note async.
+        /// Fetches ticket sales by student email from DB.
         /// </summary>
         /// <param name="studentEmail"></param>
         /// <returns>
@@ -155,60 +150,6 @@ namespace RaikesHacks_Project_S26.Accessors
                 }
             }
             return tickets;
-        }
-
-        /// <summary>
-        /// Fetches ticket sales by event name from DBs.    
-        /// </summary>
-        /// <param name="eventName"></param>
-        /// <returns>
-        /// A list of ticket sales for the given event name.
-        /// </returns>
-        public async Task<IEnumerable<TicketSale>> GetTicketsByEventNameAsync(string eventName)
-        {
-            using (var connection = new SqliteConnection(_connectionString))
-            {
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, StudentEmail, EventName, EventDate, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE EventName = @EventName";
-                command.Parameters.AddWithValue("@EventName", eventName);
-                using (var reader = await command.ExecuteReaderAsync())
-                {
-                    var tickets = new List<TicketSale>();
-                    while (await reader.ReadAsync())
-                    {
-                        tickets.Add(MapReaderToTicket(reader));
-                    }
-                    return tickets;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Fetches ticket sales by ticket type from DB.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns>
-        /// A list of ticket sales for the given ticket type.
-        /// </returns>
-        public async Task<IEnumerable<TicketSale>> GetTicketsByTypeAsync(TicketType type)
-        {
-            using (var connection = new SqliteConnection(_connectionString))
-            {
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, StudentEmail, EventName, EventDate, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE TicketType = @TicketType";
-                command.Parameters.AddWithValue("@TicketType", (int)type);
-                using (var reader = await command.ExecuteReaderAsync())
-                {
-                    var tickets = new List<TicketSale>();
-                    while (await reader.ReadAsync())
-                    {
-                        tickets.Add(MapReaderToTicket(reader));
-                    }
-                    return tickets;
-                }
-            }
         }
 
         /// <summary>
