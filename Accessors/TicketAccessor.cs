@@ -21,6 +21,7 @@ namespace RaikesHacks_Project_S26.Accessors
         public TicketAccessor(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("TicketDb")!; //appsettings.json
+            InitializeDatabase();
         }
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace RaikesHacks_Project_S26.Accessors
         }
 
         /// <summary>
-        /// Initializes the database by creating the TicketSales table if it doesn't exist.
+        /// Initializes the database by creating the TicketSales table if it doesn't exist. This is called in the constructor to ensure the DB is ready for use.
         /// </summary>
         /// <param name="reader"></param>
         /// <returns>
