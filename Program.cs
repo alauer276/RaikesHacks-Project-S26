@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
         {
-            policy.AllowAnyOrigin() // Allow any origin for development
+            policy.AllowAnyOrigin() // Allow any origin for development. For testing only
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });

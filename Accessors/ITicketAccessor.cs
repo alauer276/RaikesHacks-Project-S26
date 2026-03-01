@@ -6,6 +6,10 @@ namespace RaikesHacks_Project_S26.Accessors
     /// Interface for accessing ticket sale data.
     /// Defines the contract for CRUD operations and queries on ticket sales.
     /// </summary>
+    /// <remarks>
+    /// AKS
+    /// 2.28.2026
+    /// </remarks>
     public interface ITicketAccessor
     {
         Task<TicketSale?> GetTicketByIdAsync(int id);
