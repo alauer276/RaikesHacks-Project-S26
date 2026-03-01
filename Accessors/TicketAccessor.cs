@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using RaikesHacks_Project_S26.Model;
+using System.Data;
 
 namespace RaikesHacks_Project_S26.Accessors
 {
@@ -37,10 +38,11 @@ namespace RaikesHacks_Project_S26.Accessors
                 Id = reader.GetInt32(0),
                 StudentEmail = reader.GetString(1),
                 EventName = reader.GetString(2),
-                Price = (decimal)reader.GetDouble(3),
-                Type = (TicketType)reader.GetInt32(4),
-                IsPaid = reader.GetInt32(5) == 1,
-                PurchaseDate = DateTime.Parse(reader.GetString(6))
+                EventDate = DateTime.Parse(reader.GetString(3)),
+                Price = (decimal)reader.GetDouble(4),
+                Type = (TicketType)reader.GetInt32(5),
+                IsPaid = reader.GetInt32(6) == 1,
+                PurchaseDate = DateTime.Parse(reader.GetString(7))
             };
         }
 
@@ -57,13 +59,13 @@ namespace RaikesHacks_Project_S26.Accessors
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                // Create the TicketSales table with the required schema if it does not already exist
                 command.CommandText =
                 @"
                     CREATE TABLE IF NOT EXISTS TicketSales (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         StudentEmail TEXT NOT NULL,
                         EventName TEXT NOT NULL,
+                        EventDate TEXT NOT NULL,
                         Price REAL NOT NULL,
                         TicketType INTEGER NOT NULL,
                         IsPaid INTEGER NOT NULL,
@@ -87,7 +89,7 @@ namespace RaikesHacks_Project_S26.Accessors
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, StudentEmail, EventName, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE Id = @Id";
+                command.CommandText = "SELECT Id, StudentEmail, EventName, EventDate, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE Id = @Id";
                 command.Parameters.AddWithValue("@Id", id);
                 using (var reader = await command.ExecuteReaderAsync())
                 {
@@ -115,7 +117,7 @@ namespace RaikesHacks_Project_S26.Accessors
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, StudentEmail, EventName, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales";
+                command.CommandText = "SELECT Id, StudentEmail, EventName, EventDate, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales";
                 using (var reader = await command.ExecuteReaderAsync())
                 {
                     var tickets = new List<TicketSale>();
@@ -142,7 +144,7 @@ namespace RaikesHacks_Project_S26.Accessors
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, StudentEmail, EventName, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE StudentEmail = @StudentEmail";
+                command.CommandText = "SELECT Id, StudentEmail, EventName, EventDate, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE StudentEmail = @StudentEmail";
                 command.Parameters.AddWithValue("@StudentEmail", studentEmail);
                 using (var reader = await command.ExecuteReaderAsync())
                 {
@@ -153,6 +155,60 @@ namespace RaikesHacks_Project_S26.Accessors
                 }
             }
             return tickets;
+        }
+
+        /// <summary>
+        /// Fetches ticket sales by event name from DBs.    
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <returns>
+        /// A list of ticket sales for the given event name.
+        /// </returns>
+        public async Task<IEnumerable<TicketSale>> GetTicketsByEventNameAsync(string eventName)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT Id, StudentEmail, EventName, EventDate, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE EventName = @EventName";
+                command.Parameters.AddWithValue("@EventName", eventName);
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    var tickets = new List<TicketSale>();
+                    while (await reader.ReadAsync())
+                    {
+                        tickets.Add(MapReaderToTicket(reader));
+                    }
+                    return tickets;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fetches ticket sales by ticket type from DB.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>
+        /// A list of ticket sales for the given ticket type.
+        /// </returns>
+        public async Task<IEnumerable<TicketSale>> GetTicketsByTypeAsync(TicketType type)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT Id, StudentEmail, EventName, EventDate, Price, TicketType, IsPaid, PurchaseDate FROM TicketSales WHERE TicketType = @TicketType";
+                command.Parameters.AddWithValue("@TicketType", (int)type);
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    var tickets = new List<TicketSale>();
+                    while (await reader.ReadAsync())
+                    {
+                        tickets.Add(MapReaderToTicket(reader));
+                    }
+                    return tickets;
+                }
+            }
         }
 
         /// <summary>
@@ -168,20 +224,19 @@ namespace RaikesHacks_Project_S26.Accessors
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                // Insert the new ticket and immediately retrieve the auto-generated ID
                 command.CommandText =
                 @"
-                    INSERT INTO TicketSales (StudentEmail, EventName, Price, TicketType, IsPaid, PurchaseDate)
-                    VALUES (@StudentEmail, @EventName, @Price, @TicketType, @IsPaid, @PurchaseDate);
+                    INSERT INTO TicketSales (StudentEmail, EventName, EventDate, Price, TicketType, IsPaid, PurchaseDate)
+                    VALUES (@StudentEmail, @EventName, @EventDate, @Price, @TicketType, @IsPaid, @PurchaseDate);
                     SELECT last_insert_rowid();
                 ";
                 command.Parameters.AddWithValue("@StudentEmail", ticket.StudentEmail);
                 command.Parameters.AddWithValue("@EventName", ticket.EventName);
+                command.Parameters.AddWithValue("@EventDate", ticket.EventDate.ToString("o"));
                 command.Parameters.AddWithValue("@Price", ticket.Price);
                 command.Parameters.AddWithValue("@TicketType", (int)ticket.Type);
                 command.Parameters.AddWithValue("@IsPaid", ticket.IsPaid ? 1 : 0);
                 command.Parameters.AddWithValue("@PurchaseDate", ticket.PurchaseDate.ToString("o"));
-                // ExecuteScalarAsync returns the first column of the first row, which is the new ID here
                 return Convert.ToInt32(await command.ExecuteScalarAsync());
             }
         }
@@ -203,6 +258,7 @@ namespace RaikesHacks_Project_S26.Accessors
                     UPDATE TicketSales 
                     SET StudentEmail = @StudentEmail, 
                         EventName = @EventName, 
+                        EventDate = @EventDate,
                         Price = @Price, 
                         TicketType = @TicketType,
                         IsPaid = @IsPaid, 
@@ -211,12 +267,12 @@ namespace RaikesHacks_Project_S26.Accessors
                 command.Parameters.AddWithValue("@Id", ticket.Id);
                 command.Parameters.AddWithValue("@StudentEmail", ticket.StudentEmail);
                 command.Parameters.AddWithValue("@EventName", ticket.EventName);
+                command.Parameters.AddWithValue("@EventDate", ticket.EventDate.ToString("o"));
                 command.Parameters.AddWithValue("@Price", ticket.Price);
                 command.Parameters.AddWithValue("@TicketType", (int)ticket.Type);
                 command.Parameters.AddWithValue("@IsPaid", ticket.IsPaid ? 1 : 0);
                 command.Parameters.AddWithValue("@PurchaseDate", ticket.PurchaseDate.ToString("o"));
 
-                // ExecuteNonQueryAsync returns the number of rows affected; if > 0, the update was successful
                 int affectedRows = await command.ExecuteNonQueryAsync();
 
                 return affectedRows > 0;
