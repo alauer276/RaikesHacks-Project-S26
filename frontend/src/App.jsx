@@ -56,6 +56,9 @@ function App() {
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [buyerName, setBuyerName] = useState('');
+  const [buyerPhone, setBuyerPhone] = useState('');
+
 
   const handleFilterSelect = (filter) => {
     const newFilters = new Set(selectedFilters);
@@ -124,8 +127,40 @@ function App() {
       return filterMatch && searchMatch;
     })
     .sort((a, b) => a.price - b.price);
+    
+    const handleSendOffer = async () => {
+    if (!buyerName || !buyerPhone) {
+      alert('Please enter your name and phone number.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5106/api/email/send-interest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ticketId: selectedItem.id,
+          buyerName: buyerName,
+          buyerPhone: buyerPhone,
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to send email');
+
+      // Close offer modal, open confirmation, clear inputs
+      setSelectedItem(null);
+      setShowConfirmation(true);
+      setBuyerName('');
+      setBuyerPhone('');
+    } catch (error) {
+      console.error('Error sending offer:', error);
+      alert('Failed to send offer. Please try again.');
+    }
+  };
 
   return (
+
+  
     <>
       <nav className="navbar">
         <div className="home-icon" onClick={() => window.location.reload()}>
@@ -234,17 +269,28 @@ function App() {
               <p className="modal-price">${(selectedItem.price ?? 0).toFixed(2)}</p>
 
               <div className="modal-inputs">
-                <input type="text" placeholder="Your Name" className="modal-input" />
-                <input type="tel" placeholder="Phone Number" className="modal-input" />
+                <input
+                  type="text"
+                  placeholder="Your Name"
+                  className="modal-input"
+                  value={buyerName}
+                  onChange={(e) => setBuyerName(e.target.value)}
+                />
+                <input
+                  type="tel"
+                  placeholder="Phone Number"
+                  className="modal-input"
+                  value={buyerPhone}
+                  onChange={(e) => setBuyerPhone(e.target.value)}
+                />
               </div>
 
               <div className="modal-footer">
-                <button className="modal-send-btn" onClick={() => {
-                    setSelectedItem(null);
-                    setShowConfirmation(true);
-                  }}>Send Offer</button>
+                <button className="modal-send-btn" onClick={handleSendOffer}>Send Offer</button>
               </div>
             </div>
+
+            
           </div>
         )}
 
@@ -259,7 +305,6 @@ function App() {
             </div>
           </div>
         )}
-
       </main>
     </>
   );
