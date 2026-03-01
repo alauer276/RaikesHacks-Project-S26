@@ -17,7 +17,13 @@ body {
 
 .home-icon {
   cursor: pointer;
-  font-size: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.home-icon img {
+  height: 40px;
+  filter: brightness(0) invert(1); /* Turns the red logo white to match navbar */
 }
 
 /* Search Group */

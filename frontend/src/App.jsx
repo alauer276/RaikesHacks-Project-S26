@@ -128,7 +128,9 @@ function App() {
   return (
     <>
       <nav className="navbar">
-        <div className="home-icon" onClick={() => window.location.reload()}>🏠</div>
+        <div className="home-icon" onClick={() => window.location.reload()}>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Nebraska_Cornhuskers_logo.svg" alt="UNL Home" />
+        </div>
         <div className="search-group">
           <input
             type="text"
