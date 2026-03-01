@@ -15,6 +15,7 @@ function App() {
   const [eventName, setEventName] = useState('');
   const [eventType, setEventType] = useState('');
   const [price, setPrice] = useState('');
+  const [budget, setBudget] = useState(10000);
   const [category, setCategory] = useState('Football');
   const [showMyOffers, setShowMyOffers] = useState(false);
   const [myOffersEmail, setMyOffersEmail] = useState('');
@@ -122,12 +123,16 @@ function App() {
     }
   };
 
+  // Calculate max price for the slider
+  const maxPrice = items.reduce((max, item) => (item.price > max ? item.price : max), 0);
+
   // Fixed filter logic: now filters on eventType instead of description
   const displayedItems = items
   .filter(item => {
     const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
     const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return filterMatch && searchMatch;
+    const budgetMatch = item.price <= budget;
+    return filterMatch && searchMatch && budgetMatch;
   })
   .sort((a, b) => a.price - b.price);
   
@@ -210,6 +215,19 @@ function App() {
           </button>
           {showFilters && (
             <div className="dropdown-menu">
+              <div style={{ padding: '15px', borderBottom: '1px solid #eee' }}>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: 'bold', fontSize: '14px' }}>
+                  Max Price: ${Math.min(budget, maxPrice).toFixed(0)}
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max={maxPrice || 100}
+                  value={Math.min(budget, maxPrice)}
+                  onChange={(e) => setBudget(Number(e.target.value))}
+                  style={{ width: '100%', cursor: 'pointer' }}
+                />
+              </div>
               {filterOptions.map(filter => (
                 <div
                   key={filter}
@@ -390,7 +408,7 @@ function App() {
                       </div>
                     ))}
                   </div>
-                </>
+                ))
               )}
             </div>
           </div>
