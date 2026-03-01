@@ -4,7 +4,7 @@ import unlLogo from './assets/pngegg.png';
 
 // Ticket types available for filtering, corresponding to the backend TicketType enum
 const filterOptions = ['Football', 'Volleyball', 'MensBasketball', 'WomensBasketball', 'Baseball', 'Music', 'Softball'];
-const API_BASE_URL = 'http://localhost:5106/api';
+const API_BASE_URL = 'http://10.65.238.92:5106/api';
 
 function App() {
   // State for UI elements

@@ -3,41 +3,44 @@ using RaikesHacks_Project_S26.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
-
-// Register the accessor for dependency injection
 builder.Services.AddScoped<ITicketAccessor, TicketAccessor>();
 builder.Services.AddScoped<IOfferAccessor, OfferAccessor>();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:5173") // Explicitly set the React port
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
-        });
+    });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection(); // Disable HTTPS redirection to prevent connection issues in dev
+// Manual CORS header injection as fallback
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+    context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "*");
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 200;
+        return;
+    }
+    await next();
+});
 
 app.UseCors();
-
 app.MapControllers();
-
 app.Run();
