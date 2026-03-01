@@ -199,6 +199,13 @@ body {
   margin-top: 4px;
 }
 
+.item-date {
+  color: #7f8c8d;
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 4px;
+}
+
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
@@ -297,6 +304,13 @@ body {
   font-size: 20px;
   font-weight: 700;
   color: #d00000;
+}
+
+.modal-date {
+  color: #5a7a96;
+  font-size: 14px;
+  margin: 0 0 8px;
+  font-style: italic;
 }
 
 .modal-type {
