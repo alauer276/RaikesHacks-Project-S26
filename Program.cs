@@ -1,4 +1,5 @@
 using RaikesHacks_Project_S26.Accessors;
+using RaikesHacks_Project_S26.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,8 @@ builder.Services.AddControllers();
 
 // Register the accessor for dependency injection
 builder.Services.AddScoped<ITicketAccessor, TicketAccessor>();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
