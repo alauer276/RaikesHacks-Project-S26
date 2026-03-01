@@ -121,13 +121,13 @@ function App() {
 
       // Construct the new ticket object
       const newItem = {
-        StudentEmail: studentEmail,
-        EventName: eventName,
-        Type: eventType,
-        EventDate: utcEventDate.toISOString(),
-        Price: parseFloat(price),
-        IsPaid: false,
-        PurchaseDate: new Date().toISOString(),
+        studentEmail: studentEmail,
+        eventName: eventName,
+        type: eventType,
+        eventDate: utcEventDate.toISOString(),
+        price: parseFloat(price),
+        isPaid: false,
+        purchaseDate: new Date().toISOString(),
       };
 
       try {
@@ -170,21 +170,21 @@ function App() {
 
   // Filter items based on active categories, search text, and budget cap, then sort by price
   const displayedItems = items
-  .filter(item => {
-    const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
-    const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const budgetMatch = item.price <= budget;
+    .filter(item => {
+      const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
+      const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const budgetMatch = item.price <= budget;
 
-    const itemDate = new Date(item.eventDate);
-    const startDate = filterStartDate ? new Date(filterStartDate) : null;
-    const endDate = filterEndDate ? new Date(filterEndDate) : null;
-    if (endDate) endDate.setHours(23, 59, 59, 999); // Include the entire end day
+      const itemDate = new Date(item.eventDate);
+      const startDate = filterStartDate ? new Date(filterStartDate) : null;
+      const endDate = filterEndDate ? new Date(filterEndDate) : null;
+      if (endDate) endDate.setHours(23, 59, 59, 999); // Include the entire end day
 
-    const dateMatch = (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
+      const dateMatch = (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
 
-    return filterMatch && searchMatch && budgetMatch && dateMatch;
-  })
-  .sort((a, b) => a.price - b.price);
+      return filterMatch && searchMatch && budgetMatch && dateMatch;
+    })
+    .sort((a, b) => a.price - b.price);
   
   // Submits a purchase offer for a selected ticket
   const handleSendOffer = async () => {
@@ -222,63 +222,61 @@ function App() {
     };
 
     // Fetches offers submitted by the current user based on their email
-    const handleFetchMyOffers = async () => {
-      try {
-        // Retrieve offers associated with the provided email
-        const response = await fetch(`${API_BASE_URL}/offers/my-offers?email=${encodeURIComponent(myOffersEmail)}`);
-        if (!response.ok) throw new Error('Failed to fetch offers');
-        const data = await response.json();
-        console.log('Offers data:', data);
-        setMyOffers(data);
-      } catch (error) {
-        alert(`Error: ${error.message}`);
-      }
-    };
+  const handleFetchMyOffers = async () => {
+    try {
+      // Retrieve offers associated with the provided email
+      const response = await fetch(`${API_BASE_URL}/offers/my-offers?email=${encodeURIComponent(myOffersEmail)}`);
+      if (!response.ok) throw new Error('Failed to fetch offers');
+      const data = await response.json();
+      console.log('Offers data:', data);
+      setMyOffers(data);
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
 
-    // Deletes a specific offer by ID
-    const handleDeleteOffer = async (offerId) => {
-      try {
-        // Delete the offer and update the local list
-        const response = await fetch(`${API_BASE_URL}/offers/${offerId}`, {
-          method: 'DELETE'
-        });
-        if (!response.ok) throw new Error('Failed to delete offer');
-        setMyOffers(myOffers.filter(o => o.id !== offerId));
-      } catch (error) {
-        alert(`Error: ${error.message}`);
-      }
-    };
+  // Deletes a specific offer by ID
+  const handleDeleteOffer = async (offerId) => {
+    try {
+      // Delete the offer and update the local list
+      const response = await fetch(`${API_BASE_URL}/offers/${offerId}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete offer');
+      setMyOffers(myOffers.filter(o => o.id !== offerId));
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
 
-    // Fetches tickets listed by the current user based on their email
-    const handleFetchMyListings = async () => {
-      try {
-        // Retrieve tickets listed by the provided email
-        const response = await fetch(`${API_BASE_URL}/tickets/by-email?email=${encodeURIComponent(myListingsEmail)}`);
-        if (!response.ok) throw new Error('Failed to fetch listings');
-        const data = await response.json();
-        console.log('Listings data:', data);
-        setMyListings(data);
-      } catch (error) {
-        alert(`Error: ${error.message}`);
-      }
-    };
+  // Fetches tickets listed by the current user based on their email
+  const handleFetchMyListings = async () => {
+    try {
+      // Retrieve tickets listed by the provided email
+      const response = await fetch(`${API_BASE_URL}/tickets/by-email?email=${encodeURIComponent(myListingsEmail)}`);
+      if (!response.ok) throw new Error('Failed to fetch listings');
+      const data = await response.json();
+      console.log('Listings data:', data);
+      setMyListings(data);
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
 
-    // Deletes a ticket listing and updates the local state
-    const handleDeleteListing = async (ticketId) => {
-      try {
-        // Delete the ticket listing and remove it from both the listings view and the main feed
-        const response = await fetch(`${API_BASE_URL}/tickets/${ticketId}`, { method: 'DELETE' });
-        if (!response.ok) throw new Error('Failed to delete listing');
-        setMyListings(myListings.filter(l => l.id !== ticketId));
-        setItems(items.filter(i => i.id !== ticketId));
-      } catch (error) {
-        alert(`Error: ${error.message}`);
-      }
-    };
+  // Deletes a ticket listing and updates the local state
+  const handleDeleteListing = async (ticketId) => {
+    try {
+      // Delete the ticket listing and remove it from both the listings view and the main feed
+      const response = await fetch(`${API_BASE_URL}/tickets/${ticketId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Failed to delete listing');
+      setMyListings(myListings.filter(l => l.id !== ticketId));
+      setItems(items.filter(i => i.id !== ticketId));
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
 
   return (
-
-  
     <>
       <nav className="navbar">
         <div className="home-icon" onClick={() => window.location.reload()}>
@@ -367,9 +365,7 @@ function App() {
                 type="text"
                 placeholder="Student Email... (e.g., user@unl.edu)"
                 value={studentEmail}
-                
                 onChange={(e) => setStudentEmail(e.target.value)}
-                
               />
               <input
                 type="text"
@@ -460,8 +456,6 @@ function App() {
                 <button className="modal-send-btn" onClick={handleSendOffer}>Send Offer</button>
               </div>
             </div>
-
-            
           </div>
         )}
 
@@ -495,7 +489,7 @@ function App() {
               </div>
               {myOffers.length === 0 ? (
                 <p style={{ color: '#7f8c8d', fontStyle: 'italic' }}>No offers yet.</p>
-              ) : 
+              ) :
                 <>
                   <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '12px 0' }} />
                   <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '8px' }}>
@@ -584,4 +578,5 @@ function App() {
     </>
   );
 }
+
 export default App;
