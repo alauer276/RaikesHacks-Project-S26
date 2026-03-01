@@ -174,9 +174,9 @@ body {
 
 .item-type {
   color: #7f8c8d; /* Muted color to differentiate from event name */
-  font-size: 14px;
+  font-size: 12px;
   font-style: italic;
-  margin: 0 10px; /* Add horizontal spacing */
+  margin-top: 4px;
 }
 
 /* Modal Overlay */
