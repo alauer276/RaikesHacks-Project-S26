@@ -175,6 +175,18 @@ function App() {
       }
     };
 
+    const handleDeleteOffer = async (offerId) => {
+      try {
+        const response = await fetch(`http://localhost:5106/api/offers/${offerId}`, {
+          method: 'DELETE'
+        });
+        if (!response.ok) throw new Error('Failed to delete offer');
+        setMyOffers(myOffers.filter(o => o.id !== offerId));
+      } catch (error) {
+        alert(`Error: ${error.message}`);
+      }
+    };
+
   return (
 
   
@@ -353,9 +365,24 @@ function App() {
               ) : (
                 <>
                   <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '12px 0' }} />
-                  <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '8px' }}>
                     {myOffers.map((offer, index) => (
-                      <div key={offer.id ?? index} style={{ padding: '12px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #eee' }}>
+                      <div key={offer.id ?? index} style={{ padding: '12px', paddingRight: '32px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #eee', position: 'relative' }}>
+                        <button
+                          onClick={() => handleDeleteOffer(offer.id)}
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            background: 'none',
+                            border: 'none',
+                            color: '#c0392b',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                          }}
+                        >✕</button>
                         <div style={{ fontWeight: '600', color: '#2c3e50' }}>{offer.ticketName}</div>
                         <div style={{ color: '#4a4a6a', fontSize: '14px' }}>{offer.buyerName}</div>
                         <div style={{ color: '#4a4a6a', fontSize: '14px' }}>{offer.buyerPhone}</div>

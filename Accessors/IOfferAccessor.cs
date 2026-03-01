@@ -6,5 +6,6 @@ namespace RaikesHacks_Project_S26.Accessors
     {
         Task<int> CreateOfferAsync(Offer offer);
         Task<IEnumerable<Offer>> GetOffersByTicketIdAsync(int ticketId);
+        Task<bool> DeleteOfferAsync(int id);
     }
 }

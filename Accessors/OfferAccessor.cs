@@ -69,5 +69,16 @@ namespace RaikesHacks_Project_S26.Accessors
             }
             return offers;
         }
+
+        public async Task<bool> DeleteOfferAsync(int id)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM Offers WHERE Id = @Id";
+            command.Parameters.AddWithValue("@Id", id);
+            int affectedRows = await command.ExecuteNonQueryAsync();
+            return affectedRows > 0;
+        }
     }
 }

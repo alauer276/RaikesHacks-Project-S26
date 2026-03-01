@@ -49,5 +49,11 @@ namespace RaikesHacks_Project_S26.Controllers
             }
             return Ok(allOffers);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOffer(int id)
+        {
+            var success = await _offerAccessor.DeleteOfferAsync(id);
+            return success ? NoContent() : NotFound();
+        }
     }
 }
