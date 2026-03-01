@@ -22,6 +22,9 @@ function App() {
   const [myOffers, setMyOffers] = useState([]);
   const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music'];
   const filterContainerRef = useRef(null);
+  const [showMyListings, setShowMyListings] = useState(false);
+  const [myListingsEmail, setMyListingsEmail] = useState('');
+  const [myListings, setMyListings] = useState([]);
 
   // IMPORTANT: Update this port to match your ASP.NET Core launch settings (e.g., 5000, 5106, 7000)
   const API_URL = 'http://localhost:5106/api/tickets';
@@ -192,6 +195,29 @@ function App() {
       }
     };
 
+    const handleFetchMyListings = async () => {
+      try {
+        const response = await fetch(`http://localhost:5106/api/tickets/by-email?email=${encodeURIComponent(myListingsEmail)}`);
+        if (!response.ok) throw new Error('Failed to fetch listings');
+        const data = await response.json();
+        console.log('Listings data:', data);
+        setMyListings(data);
+      } catch (error) {
+        alert(`Error: ${error.message}`);
+      }
+    };
+
+    const handleDeleteListing = async (ticketId) => {
+      try {
+        const response = await fetch(`${API_URL}/${ticketId}`, { method: 'DELETE' });
+        if (!response.ok) throw new Error('Failed to delete listing');
+        setMyListings(myListings.filter(l => l.id !== ticketId));
+        setItems(items.filter(i => i.id !== ticketId));
+      } catch (error) {
+        alert(`Error: ${error.message}`);
+      }
+    };
+
   return (
 
   
@@ -302,6 +328,10 @@ function App() {
             View My Offers
           </button>
 
+          <button className="view-offers-btn" style={{ background: '#c0392b' }} onClick={() => setShowMyListings(true)}>
+            Manage My Listings
+          </button>
+
         </div>
 
         <div className="item-list">
@@ -356,7 +386,7 @@ function App() {
               <button className="modal-close" onClick={() => setShowConfirmation(false)}>✕</button>
               <h2 className="confirm-title">Message Sent!</h2>
               <p className="confirm-body">
-                Email has been sent, wait for a message from the ticket holder for further ticket discussions.
+                Your offer has been sent! Please wait, the ticket holder will reach out to you directly.
               </p>
             </div>
           </div>
@@ -410,6 +440,58 @@ function App() {
                   </div>
                 </>
               }
+            </div>
+          </div>
+        )}
+
+        {showMyListings && (
+          <div className="modal-overlay" onClick={() => { setShowMyListings(false); setMyListings([]); setMyListingsEmail(''); }}>
+            <div className="modal-card confirm-card" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => { setShowMyListings(false); setMyListings([]); setMyListingsEmail(''); }}>✕</button>
+              <h2 className="confirm-title">Manage My Listings</h2>
+              <input
+                type="text"
+                placeholder="Your UNL email"
+                className="modal-input"
+                value={myListingsEmail}
+                onChange={(e) => setMyListingsEmail(e.target.value)}
+                style={{ marginTop: '12px', marginBottom: '16px' }}
+              />
+              <div className="modal-footer" style={{ marginBottom: '16px' }}>
+                <button className="modal-send-btn" onClick={handleFetchMyListings}>Check Listings</button>
+                <button className="modal-send-btn" style={{ marginLeft: '10px' }} onClick={() => { setShowMyListings(false); setMyListings([]); setMyListingsEmail(''); }}>Close</button>
+              </div>
+              {myListings.length === 0 ? (
+                <p style={{ color: '#7f8c8d', fontStyle: 'italic' }}>No listings found.</p>
+              ) : (
+                <>
+                  <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '12px 0' }} />
+                  <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '8px' }}>
+                    {myListings.map((listing, index) => (
+                      <div key={listing.id ?? index} style={{ padding: '12px', paddingRight: '32px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #eee', position: 'relative' }}>
+                        <button
+                          onClick={() => handleDeleteListing(listing.id)}
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            background: 'none',
+                            border: 'none',
+                            color: '#c0392b',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                          }}
+                        >✕</button>
+                        <div style={{ fontWeight: '600', color: '#2c3e50' }}>{listing.eventName}</div>
+                        <div style={{ color: '#4a4a6a', fontSize: '14px', fontStyle: 'italic' }}>{listing.type}</div>
+                        <div style={{ color: '#27ae60', fontWeight: 'bold' }}>${(listing.price ?? 0).toFixed(2)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
