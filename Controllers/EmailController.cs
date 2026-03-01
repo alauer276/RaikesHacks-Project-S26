@@ -57,7 +57,7 @@ namespace RaikesHacks_Project_S26.Controllers
     public class TicketInterestRequest
     {
         public int TicketId { get; set; }
-        public string BuyerEmail { get; set; } = string.Empty;
+        public string BuyerName { get; set; } = string.Empty;
         public string BuyerPhone { get; set; } = string.Empty;
     }
 }

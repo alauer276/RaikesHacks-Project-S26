@@ -28,7 +28,7 @@ namespace RaikesHacks_Project_S26.Controllers {
 You have a potential buyer for your {eventName} ticket!
 
 Buyer Contact:
-Email: {request.BuyerEmail}
+Name: {request.BuyerName}
 Phone: {request.BuyerPhone}
 
 Contact the buyer for more information to finalize the sale.
