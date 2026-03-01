@@ -109,10 +109,10 @@ function App() {
         studentEmail: studentEmail,
         eventName: eventName,
         type: eventType,
-        eventDate: new Date(eventDate).toISOString(),
+        EventDate: new Date(eventDate).toISOString(),
         price: parseFloat(price),
         isPaid: false,
-        purchaseDate: new Date().toISOString(),
+        PurchaseDate: new Date().toISOString(),
       };
 
       try {
