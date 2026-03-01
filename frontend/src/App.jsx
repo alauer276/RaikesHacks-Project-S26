@@ -31,9 +31,8 @@ function App() {
         const mappedItems = data.map(ticket => ({
           id: ticket.id,
           description: ticket.eventName,
-          studentEmail: ticket.studentEmail,
           price: ticket.price,
-          eventType: ticket.eventType,
+          eventType: ticket.type,
         }));
         setItems(mappedItems);
       } catch (error) {
@@ -78,7 +77,7 @@ function App() {
       const newItem = {
         studentEmail: studentEmail,
         eventName: eventName,
-        eventType: eventType,
+        type: eventType,
         price: parseFloat(price),
         isPaid: false,
         purchaseDate: new Date().toISOString(),
@@ -96,9 +95,8 @@ function App() {
         setItems([...items, {
           id: createdTicket.id,
           description: createdTicket.eventName,
-          studentEmail: createdTicket.studentEmail,
           price: createdTicket.price,
-          eventType: createdTicket.eventType,
+          eventType: createdTicket.type,
         }]);
 
         setStudentEmail('');
@@ -178,7 +176,7 @@ function App() {
               />
               <input
                 type="text"
-                placeholder="Event Name:"
+                placeholder="Event Name"
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
               />
@@ -207,7 +205,6 @@ function App() {
           {displayedItems.map(item => (
             <div key={item.id} className="item-card">
               <span className="item-text">{item.description}</span>
-              <span className="item-type">{item.eventType}</span>
               <span className="item-price">${item.price.toFixed(2)}</span>
             </div>
           ))}
