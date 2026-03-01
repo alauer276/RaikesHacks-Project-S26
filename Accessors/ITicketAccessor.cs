@@ -15,8 +15,6 @@ namespace RaikesHacks_Project_S26.Accessors
         Task<TicketSale?> GetTicketByIdAsync(int id);
         Task<IEnumerable<TicketSale>> GetAllTicketsAsync();
         Task<IEnumerable<TicketSale>> GetTicketsByStudentEmailAsync(string studentEmail);
-        Task<IEnumerable<TicketSale>> GetTicketsByEventNameAsync(string eventName);
-        Task<IEnumerable<TicketSale>> GetTicketsByTypeAsync(TicketType type);
         Task<int> CreateTicketAsync(TicketSale ticket);
         Task<bool> UpdateTicketAsync(TicketSale ticket);
         Task<bool> DeleteTicketAsync(int id);
