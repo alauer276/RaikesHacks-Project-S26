@@ -65,7 +65,10 @@ function App() {
   };
 
   const handleAddItem = async () => {
-    if (!studentEmail.toLowerCase().endsWith('@nebraska.edu' || 'huskers.unl.edu' || 'unl.edu')) {
+    const allowedDomains = ['@nebraska.edu', '@huskers.unl.edu', '@unl.edu'];
+    const isEmailValid = allowedDomains.some(domain => studentEmail.toLowerCase().endsWith(domain));
+
+    if (!studentEmail || !isEmailValid) {
       alert('It is not the correct email. Please use an email ending in a UNL email');
       return;
     }
@@ -165,7 +168,7 @@ function App() {
             <div className="form-container">
               <input
                 type="text"
-                placeholder="Student Email... Ex:user@nebraska.edu"
+                placeholder="Student Email... (e.g., user@unl.edu)"
                 value={studentEmail}
                 
                 onChange={(e) => setStudentEmail(e.target.value)}
@@ -209,6 +212,5 @@ function App() {
       </main>
     </>
   );
-}
 
 export default App;
