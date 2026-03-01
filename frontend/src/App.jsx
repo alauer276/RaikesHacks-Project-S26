@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css'
+import unlLogo from './assets/pngegg.png';
 
 function App() {
   // State for UI elements
@@ -129,7 +130,7 @@ function App() {
     <>
       <nav className="navbar">
         <div className="home-icon" onClick={() => window.location.reload()}>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Nebraska_Cornhuskers_logo.svg" alt="UNL Home" />
+          <img src={unlLogo} alt="UNL Home" />
         </div>
         <div className="search-group">
           <input
