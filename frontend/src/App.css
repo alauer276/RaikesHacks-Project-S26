@@ -163,3 +163,10 @@ body {
   font-weight: bold;
   font-size: 18px;
 }
+
+.item-type {
+  color: #7f8c8d; /* Muted color to differentiate from event name */
+  font-size: 14px;
+  font-style: italic;
+  margin: 0 10px; /* Add horizontal spacing */
+}
