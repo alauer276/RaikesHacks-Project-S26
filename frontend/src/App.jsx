@@ -15,6 +15,7 @@ function App() {
   const [eventName, setEventName] = useState('');
   const [eventType, setEventType] = useState('');
   const [price, setPrice] = useState('');
+  const [eventDate, setEventDate] = useState('');
   const [budget, setBudget] = useState(10000);
   const [category, setCategory] = useState('Football');
   const [showMyOffers, setShowMyOffers] = useState(false);
@@ -37,6 +38,7 @@ function App() {
           description: ticket.eventName,
           price: ticket.price,
           eventType: ticket.type,
+          eventDate: ticket.eventDate,
         }));
         setItems(mappedItems);
       } catch (error) {
@@ -88,6 +90,7 @@ function App() {
         studentEmail: studentEmail,
         eventName: eventName,
         type: eventType,
+        eventDate: eventDate,
         price: parseFloat(price),
         isPaid: false,
         purchaseDate: new Date().toISOString(),
@@ -107,6 +110,7 @@ function App() {
           description: createdTicket.eventName,
           price: createdTicket.price,
           eventType: createdTicket.type,
+          eventDate: createdTicket.eventDate,
         }]);
 
         setStudentEmail('');
@@ -114,6 +118,7 @@ function App() {
         setEventType('');
         setPrice('');
         setShowForm(false);
+        setEventDate('');
       } catch (error) {
         console.error('Error adding item:', error);
         alert('Failed to add item. Please try again.');
@@ -285,6 +290,12 @@ function App() {
                 ))}
               </select>
               <input
+                type="date"
+                placeholder="Event Date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+              />
+              <input
                 type="number"
                 placeholder="Price ($)"
                 min="0"
@@ -309,6 +320,7 @@ function App() {
             <div key={item.id} className="item-card" onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span className="item-text">{item.description}</span>
+                <span className="item-date">{new Date(item.eventDate).toLocaleDateString()}</span>
                 <span className="item-type">{item.eventType}</span>
               </div>
               <span className="item-price">${item.price.toFixed(2)}</span>
@@ -321,6 +333,7 @@ function App() {
               <button className="modal-close" onClick={() => setSelectedItem(null)}>✕</button>
               
               <h2 className="modal-title">{selectedItem.description}</h2>
+              <p className="modal-date">Event on: {new Date(selectedItem.eventDate).toLocaleDateString()}</p>
               <p className="modal-type">{selectedItem.eventType}</p>
               <p className="modal-price">${(selectedItem.price ?? 0).toFixed(2)}</p>
 
