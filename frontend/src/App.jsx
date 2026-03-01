@@ -65,9 +65,14 @@ function App() {
   };
 
   const handleAddItem = async () => {
+    if (!studentEmail.toLowerCase().endsWith('@nebraska.edu' || 'huskers.unl.edu' || 'unl.edu')) {
+      alert('It is not the correct email. Please use an email ending in a UNL email');
+      return;
+    }
+
     if (eventName && price) {
       const newItem = {
-        studentEmail: studentEmail || 'user@example.com',
+        studentEmail: studentEmail,
         eventName: eventName,
         eventType: eventType,
         price: parseFloat(price),
@@ -160,9 +165,11 @@ function App() {
             <div className="form-container">
               <input
                 type="text"
-                placeholder="Student Email... user@huskers.unl.edu"
+                placeholder="Student Email... Ex:user@nebraska.edu"
                 value={studentEmail}
+                
                 onChange={(e) => setStudentEmail(e.target.value)}
+                
               />
               <input
                 type="text"
