@@ -161,7 +161,10 @@ function App() {
             className={`add-item-btn ${showForm ? 'close' : ''}`}
             onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? 'Close Form' : 'Add New Item'}
+            <span style={{ fontSize: '1.5em', fontWeight: 'bold', marginRight: '8px', verticalAlign: 'middle' }}>
+              {showForm ? '✕' : '+'}
+            </span>
+            <span style={{ verticalAlign: 'middle' }}>{showForm ? 'Close Form' : 'Add New Item'}</span>
           </button>
 
           {showForm && (
