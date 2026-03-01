@@ -161,6 +161,10 @@ function App() {
         </div>
       </nav>
 
+      <div className="page-header">
+        <h1 className="page-title">Ticket Finder</h1>
+      </div>
+
       <main className="main-container">
         <div className="sidebar">
           <button

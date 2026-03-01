@@ -101,6 +101,18 @@ body {
   background: #d00000; /* Keep color on hover when selected */
 }
 
+/* Page Header */
+.page-header {
+  text-align: center;
+  padding: 20px 0 0 0;
+}
+
+.page-title {
+  font-size: 42px; /* Change pixel size here */
+  color: #ffffff; /* Change color value here */
+  margin: 0;
+}
+
 /* Main Content */
 .main-container {
   display: flex;
