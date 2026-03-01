@@ -92,6 +92,11 @@ namespace RaikesHacks_Project_S26.Controllers
                 return BadRequest("ID in URL must match ID in the request body.");
             }
 
+            if (!ModelState.IsValid) // Validate the model state (email format, etc.)
+            {
+                return BadRequest(ModelState);
+            }
+
             _logger.LogInformation("Updating ticket with ID: {Id}", id);
             var success = await _ticketAccessor.UpdateTicketAsync(ticket);
 
