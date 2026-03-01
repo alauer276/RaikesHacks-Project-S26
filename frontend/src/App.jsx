@@ -107,17 +107,27 @@ function App() {
       // Robustly parse the date to avoid timezone issues.
       // This ensures "YYYY-MM-DD" is treated as the start of that day in UTC.
       const [year, month, day] = eventDate.split('-').map(Number);
+
+      // Check if date is in the past
+      const selectedDate = new Date(year, month - 1, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        alert('Event date cannot be in the past.');
+        return;
+      }
+
       const utcEventDate = new Date(Date.UTC(year, month - 1, day));
 
       // Construct the new ticket object
       const newItem = {
-        studentEmail: studentEmail,
-        eventName: eventName,
-        type: eventType,
-        eventDate: utcEventDate.toISOString(),
-        price: parseFloat(price),
-        isPaid: false,
-        purchaseDate: new Date().toISOString(),
+        StudentEmail: studentEmail,
+        EventName: eventName,
+        Type: eventType,
+        EventDate: utcEventDate.toISOString(),
+        Price: parseFloat(price),
+        IsPaid: false,
+        PurchaseDate: new Date().toISOString(),
       };
 
       try {
