@@ -193,8 +193,12 @@ function App() {
               <input
                 type="number"
                 placeholder="Price ($)"
+                min="0"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || parseFloat(val) >= 0) setPrice(val);
+                }}
               />
               <button onClick={handleAddItem}>Save Item</button>
             </div>
