@@ -16,7 +16,7 @@ body {
 }
 
 .home-icon {
-  cursor: pointer;
+  cursor: pointer;      
   font-size: 24px;
 }
 
@@ -83,7 +83,7 @@ body {
 }
 
 .dropdown-item:hover {
-  background: #f1f1f1;
+  background: #d00000;
 }
 
 .dropdown-item.selected {
@@ -152,7 +152,7 @@ body {
 .item-card {
   padding: 20px;
   background: white;
-  border-left: 5px solid #27ae60;
+  border-left: 5px solid #d00000;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   display: flex;
   justify-content: space-between;
