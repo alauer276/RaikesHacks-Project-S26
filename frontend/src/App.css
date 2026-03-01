@@ -120,6 +120,8 @@ body {
   align-items: flex-start;
   gap: 20px;
   padding: 20px;
+  overflow: hidden;
+  height: calc(100vh - 80px);
 }
 
 .sidebar {
@@ -127,6 +129,8 @@ body {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    height: 100%;
+    overflow-y:auto;
 }
 .add-item-btn {
   padding: 10px 20px;
@@ -163,10 +167,17 @@ body {
 }
 
 .item-list {
-  flex-grow: 1;
-  display: grid;
+  /* Set a fixed height or use calc to fill remaining screen space */
+  height: calc(100vh - 150px); 
+  
+  /* Enable vertical scrolling */
+  overflow-y: auto;
+  
+  /* Optional: Smooth out the layout */
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
   gap: 15px;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .item-card {
@@ -412,4 +423,17 @@ body {
 
 .view-offers-btn:hover {
   background: #2471a3;
+}
+
+.item-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.item-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.item-list::-webkit-scrollbar-thumb:hover {
+  background: #b30000; /* UNL Red for a nice touch */
 }
