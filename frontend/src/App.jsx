@@ -351,17 +351,19 @@ function App() {
               {myOffers.length === 0 ? (
                 <p style={{ color: '#7f8c8d', fontStyle: 'italic' }}>No offers yet.</p>
               ) : (
-                myOffers.map(offer => (
-                  <div key={offer.id} className="admin-list-item" style={{ marginBottom: '10px' }}>
-                    <div>
-                      <span className="admin-item-name"><p style={{ paddingLeft: '16px' }}>{offer.ticketName}</p></span>
-                      <span className="admin-item-type"><p style={{ paddingLeft: '0 16px' }}>{offer.buyerName}</p>{offer.buyerPhone}</span>
-                    </div>
-                    <span style={{ fontSize: '12px', color: '#aaa' }}>
-                      {new Date(offer.submittedAt).toLocaleDateString()}
-                    </span>
+                <>
+                  <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '12px 0' }} />
+                  <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {myOffers.map((offer, index) => (
+                      <div key={offer.id ?? index} style={{ padding: '12px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #eee' }}>
+                        <div style={{ fontWeight: '600', color: '#2c3e50' }}>{offer.ticketName}</div>
+                        <div style={{ color: '#4a4a6a', fontSize: '14px' }}>{offer.buyerName}</div>
+                        <div style={{ color: '#4a4a6a', fontSize: '14px' }}>{offer.buyerPhone}</div>
+                        <div style={{ color: '#aaa', fontSize: '12px' }}>{new Date(offer.submittedAt).toLocaleDateString()}</div>
+                      </div>
+                    ))}
                   </div>
-                ))
+                </>
               )}
             </div>
           </div>
