@@ -380,7 +380,7 @@ function App() {
               </div>
               {myOffers.length === 0 ? (
                 <p style={{ color: '#7f8c8d', fontStyle: 'italic' }}>No offers yet.</p>
-              ) : (
+              ) : 
                 <>
                   <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '12px 0' }} />
                   <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '8px' }}>
@@ -408,8 +408,8 @@ function App() {
                       </div>
                     ))}
                   </div>
-                ))
-              )}
+                </>
+              }
             </div>
           </div>
         )}
