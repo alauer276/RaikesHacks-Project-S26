@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background-color: #f4f4f9; /* A neutral background for the main content */
+  background-color: #f5f1e7; /* A neutral background for the main content */
 }
 
 /* Navbar */
@@ -11,7 +11,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background-color: #2c3e50;
+  background-color: #f00000;
   color: white;
 }
 
