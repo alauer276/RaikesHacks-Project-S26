@@ -22,6 +22,8 @@ function App() {
   const [myOffersEmail, setMyOffersEmail] = useState('');
   const [myOffers, setMyOffers] = useState([]);
   const filterOptions = ['Football', 'Volleyball', 'MensBasketball', 'WomensBasketball', 'Baseball', 'Music', 'Softball'];
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
   const filterContainerRef = useRef(null);
   const [showMyListings, setShowMyListings] = useState(false);
   const [myListingsEmail, setMyListingsEmail] = useState('');
@@ -146,7 +148,15 @@ function App() {
     const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
     const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
     const budgetMatch = item.price <= budget;
-    return filterMatch && searchMatch && budgetMatch;
+
+    const itemDate = new Date(item.eventDate);
+    const startDate = filterStartDate ? new Date(filterStartDate) : null;
+    const endDate = filterEndDate ? new Date(filterEndDate) : null;
+    if (endDate) endDate.setHours(23, 59, 59, 999); // Include the entire end day
+
+    const dateMatch = (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
+
+    return filterMatch && searchMatch && budgetMatch && dateMatch;
   })
   .sort((a, b) => a.price - b.price);
   
@@ -264,6 +274,25 @@ function App() {
                   onChange={(e) => setBudget(Number(e.target.value))}
                   style={{ width: '100%', cursor: 'pointer' }}
                 />
+              </div>
+              <div style={{ padding: '15px', borderBottom: '1px solid #eee' }}>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: 'bold', fontSize: '14px' }}>
+                  Date Range
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <input
+                    type="date"
+                    value={filterStartDate}
+                    onChange={(e) => setFilterStartDate(e.target.value)}
+                    style={{ width: '100%', padding: '6px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }}
+                  />
+                  <input
+                    type="date"
+                    value={filterEndDate}
+                    onChange={(e) => setFilterEndDate(e.target.value)}
+                    style={{ width: '100%', padding: '6px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }}
+                  />
+                </div>
               </div>
               {filterOptions.map(filter => (
                 <div
