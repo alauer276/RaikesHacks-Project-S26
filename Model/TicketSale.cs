@@ -17,8 +17,11 @@ namespace RaikesHacks_Project_S26.Model
     {
         Football,
         Volleyball,
-        Basketball,
-        Music
+        MensBasketball,
+        WomensBasketball,
+        Baseball,
+        Music,
+        Softball
     }
 
     public class TicketSale
