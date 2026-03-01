@@ -281,7 +281,7 @@ body {
 }
 
 .modal-type {
-  color: #4a4a6a;
+  color: #5a7a96;
   font-size: 14px;
   margin: 0 0 16px;
 }
@@ -303,7 +303,7 @@ body {
 .modal-input {
   background: transparent;
   border: none;
-  border-bottom: 1.5px solid #c7c8ca;
+  border-bottom: 1.5px solid #5a7a96;
   padding: 8px 2px;
   font-size: 15px;
   font-style: italic;
@@ -352,7 +352,7 @@ body {
 .confirm-title {
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #5a7a96;
   margin: 0 0 12px;
 }
 
