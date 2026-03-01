@@ -9,7 +9,7 @@ A full-stack web application for University of Nebraska-Lincoln students to find
 
 ## Features
 
-*   **Example Video:* https://youtu.be/aBnuuFrnTNM
+*   **Example Video:** https://youtu.be/aBnuuFrnTNM
 
 *   **Browse & Filter:** View all available ticket listings. Filter by event type, price range, date, and search by event name.
 *   **List Tickets:** Students with a valid UNL-affiliated email (`@unl.edu`, `@nebraska.edu`, `@huskers.unl.edu`) can list tickets for sale.
