@@ -29,6 +29,18 @@ function App() {
   const [myListingsEmail, setMyListingsEmail] = useState('');
   const [myListings, setMyListings] = useState([]);
 
+  const formatTicketType = (type) => {
+    if (type === 'MensBasketball') return 'Mens Basketball';
+    if (type === 'WomensBasketball') return 'Womens Basketball';
+    return type;
+  };
+
+  const formatTicketType = (type) => {
+    if (type === 'MensBasketball') return 'Mens Basketball';
+    if (type === 'WomensBasketball') return 'Womens Basketball';
+    return type;
+  };
+
   // Effect to fetch all tickets from the API when the component mounts
   useEffect(() => {
     const fetchTickets = async () => {
@@ -286,7 +298,7 @@ function App() {
                   className={`dropdown-item ${selectedFilters.has(filter) ? 'selected' : ''}`}
                   onClick={() => handleFilterSelect(filter)}
                 >
-                  {filter}
+                  {formatTicketType(filter)}
                 </div>
               ))}
             </div>
@@ -333,7 +345,7 @@ function App() {
               >
                 <option value="">Select Event Type</option>
                 {filterOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option} value={option}>{formatTicketType(option)}</option>
                 ))}
               </select>
               <input
@@ -360,7 +372,7 @@ function App() {
             View My Offers
           </button>
 
-          <button className="view-offers-btn" style={{ background: '#c0392b' }} onClick={() => setShowMyListings(true)}>
+          <button className="view-offers-btn" style={{ background: '#7f8c8d' }} onClick={() => setShowMyListings(true)}>
             Manage My Listings
           </button>
 
@@ -372,7 +384,7 @@ function App() {
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span className="item-text">{item.description}</span>
                 <span className="item-date">{new Date(item.eventDate).toLocaleDateString()}</span>
-                <span className="item-type">{item.eventType}</span>
+                <span className="item-type">{formatTicketType(item.eventType)}</span>
               </div>
               <span className="item-price">${item.price.toFixed(2)}</span>
             </div>
@@ -385,7 +397,7 @@ function App() {
               
               <h2 className="modal-title">{selectedItem.description}</h2>
               <p className="modal-date">Event on: {new Date(selectedItem.eventDate).toLocaleDateString()}</p>
-              <p className="modal-type">{selectedItem.eventType}</p>
+              <p className="modal-type">{formatTicketType(selectedItem.eventType)}</p>
               <p className="modal-price">${(selectedItem.price ?? 0).toFixed(2)}</p>
 
               <div className="modal-inputs">
@@ -519,7 +531,7 @@ function App() {
                           }}
                         >✕</button>
                         <div style={{ fontWeight: '600', color: '#2c3e50' }}>{listing.eventName}</div>
-                        <div style={{ color: '#4a4a6a', fontSize: '14px', fontStyle: 'italic' }}>{listing.type}</div>
+                        <div style={{ color: '#4a4a6a', fontSize: '14px', fontStyle: 'italic' }}>{formatTicketType(listing.type)}</div>
                         <div style={{ color: '#27ae60', fontWeight: 'bold' }}>${(listing.price ?? 0).toFixed(2)}</div>
                       </div>
                     ))}
