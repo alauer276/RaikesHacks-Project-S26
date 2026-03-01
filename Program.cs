@@ -8,7 +8,7 @@ builder.Services.AddControllers();
 
 // Register the accessor for dependency injection
 builder.Services.AddScoped<ITicketAccessor, TicketAccessor>();
-
+builder.Services.AddScoped<IOfferAccessor, OfferAccessor>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

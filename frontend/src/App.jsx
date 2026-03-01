@@ -16,7 +16,9 @@ function App() {
   const [eventType, setEventType] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('Football');
-
+  const [showMyOffers, setShowMyOffers] = useState(false);
+  const [myOffersEmail, setMyOffersEmail] = useState('');
+  const [myOffers, setMyOffers] = useState([]);
   const filterOptions = ['Football', 'Volleyball', 'Basketball', 'Music'];
   const filterContainerRef = useRef(null);
 
@@ -122,42 +124,56 @@ function App() {
 
   // Fixed filter logic: now filters on eventType instead of description
   const displayedItems = items
-    .filter(item => {
-      const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
-      const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
-      return filterMatch && searchMatch;
-    })
-    .sort((a, b) => a.price - b.price);
-    
-    const handleSendOffer = async () => {
-    if (!buyerName || !buyerPhone) {
-      alert('Please enter your name and phone number.');
-      return;
-    }
+  .filter(item => {
+    const filterMatch = selectedFilters.size === 0 || selectedFilters.has(item.eventType);
+    const searchMatch = item.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return filterMatch && searchMatch;
+  })
+  .sort((a, b) => a.price - b.price);
+  
+  const handleSendOffer = async () => {
+      if (!buyerName || !buyerPhone) {
+        alert('Please enter your name and phone number.');
+        return;
+      }
 
-    try {
-      const response = await fetch('http://localhost:5106/api/email/send-interest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ticketId: selectedItem.id,
-          buyerName: buyerName,
-          buyerPhone: buyerPhone,
-        })
-      });
+      try {
+        const response = await fetch('http://localhost:5106/api/offers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ticketId: selectedItem.id,
+            buyerName: buyerName,
+            buyerPhone: buyerPhone,
+          })
+        });
 
-      if (!response.ok) throw new Error('Failed to send email');
+        if (!response.ok) {
+          const errorText = await response.text();
+          alert(`Error: ${errorText}`);
+          return;
+        }
 
-      // Close offer modal, open confirmation, clear inputs
-      setSelectedItem(null);
-      setShowConfirmation(true);
-      setBuyerName('');
-      setBuyerPhone('');
-    } catch (error) {
-      console.error('Error sending offer:', error);
-      alert('Failed to send offer. Please try again.');
-    }
-  };
+        setSelectedItem(null);
+        setShowConfirmation(true);
+        setBuyerName('');
+        setBuyerPhone('');
+      } catch (error) {
+        alert(`Network error: ${error.message}`);
+      }
+    };
+
+    const handleFetchMyOffers = async () => {
+      try {
+        const response = await fetch(`http://localhost:5106/api/offers/my-offers?email=${encodeURIComponent(myOffersEmail)}`);
+        if (!response.ok) throw new Error('Failed to fetch offers');
+        const data = await response.json();
+        console.log('Offers data:', data);
+        setMyOffers(data);
+      } catch (error) {
+        alert(`Error: ${error.message}`);
+      }
+    };
 
   return (
 
@@ -251,6 +267,11 @@ function App() {
               <button onClick={handleAddItem}>Save Item</button>
             </div>
           )}
+
+          <button className="view-offers-btn" onClick={() => setShowMyOffers(true)}>
+            View My Offers
+          </button>
+
         </div>
 
         <div className="item-list">
@@ -307,6 +328,41 @@ function App() {
               <p className="confirm-body">
                 Email has been sent, wait for a message from the ticket holder for further ticket discussions.
               </p>
+            </div>
+          </div>
+        )}
+
+        {showMyOffers && (
+          <div className="modal-overlay" onClick={() => setShowMyOffers(false)}>
+            <div className="modal-card confirm-card" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => setShowMyOffers(false)}>✕</button>
+              <h2 className="confirm-title">View My Offers</h2>
+              <input
+                type="text"
+                placeholder="Your UNL email"
+                className="modal-input"
+                value={myOffersEmail}
+                onChange={(e) => setMyOffersEmail(e.target.value)}
+                style={{ marginTop: '12px' }}
+              />
+              <div className="modal-footer" style={{ marginTop: '16px', marginBottom: '16px' }}>
+                <button className="modal-send-btn" onClick={handleFetchMyOffers}>Check Offers</button>
+              </div>
+              {myOffers.length === 0 ? (
+                <p style={{ color: '#7f8c8d', fontStyle: 'italic' }}>No offers yet.</p>
+              ) : (
+                myOffers.map(offer => (
+                  <div key={offer.id} className="admin-list-item" style={{ marginBottom: '10px' }}>
+                    <div>
+                      <span className="admin-item-name"><p style={{ paddingLeft: '16px' }}>{offer.ticketName}</p></span>
+                      <span className="admin-item-type"><p style={{ paddingLeft: '0 16px' }}>{offer.buyerName}</p>{offer.buyerPhone}</span>
+                    </div>
+                    <span style={{ fontSize: '12px', color: '#aaa' }}>
+                      {new Date(offer.submittedAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
