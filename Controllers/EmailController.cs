@@ -80,6 +80,9 @@ RaikesHacks '26 Team"
         }
     }
 
+    /// <summary>
+    /// Request model for submitting interest in a ticket, containing the ticket ID and buyer's contact information.
+    /// </summary>
     public class TicketInterestRequest
     {
         public int TicketId { get; set; }
